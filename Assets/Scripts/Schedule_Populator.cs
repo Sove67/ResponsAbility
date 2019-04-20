@@ -11,10 +11,11 @@ public class Schedule_Populator : MonoBehaviour
      *      Unique List Index
      *  List<Master_Schedule_Populator.ItemCreate> NAME
      *  
+     *      Call "PopulateDay()" every time the current day's schedule is changed.
      */
 
     public List<ItemCreate> master_schedule = new List<ItemCreate>();
-
+    public List<ItemCreate> current_schedule = new List<ItemCreate>();
 
     // This class and its functon are used to create a schedule item.
     public class ItemCreate
@@ -39,15 +40,7 @@ public class Schedule_Populator : MonoBehaviour
         }
     }
 
-
-
-
-
-    public void Start()
-    {
-        PopulateDay();
-    }
-
+    // This function checks which items in the master schedule occur on the current date
     public void PopulateDay()
     {
         var date = System.DateTime.Today.ToString("MMdd");
@@ -55,14 +48,12 @@ public class Schedule_Populator : MonoBehaviour
         {
             if (item.next_appearance == date)
             {
-                // if this step is reached, the currently selected event is set to occur today
-                Debug.Log(item.name);
+                current_schedule.Add(item);
+                Debug.Log("Current Schedule:");
+                DebugScheduleItem(current_schedule);
             }
         }
     }
-
-
-
 
     // Prints each part of the selected schedule to console
     public void DebugScheduleItem(List<ItemCreate> schedule)

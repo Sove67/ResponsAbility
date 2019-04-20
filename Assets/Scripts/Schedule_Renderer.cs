@@ -7,13 +7,16 @@ public class Schedule_Renderer : MonoBehaviour
     public List<Schedule_Populator.ItemCreate> items;
     public int scroll_input;
 
-    void Update()
+    private void Start()
     {
         GameObject container = GameObject.Find("Script Container");
         Schedule_Populator schedule_populator = container.GetComponent<Schedule_Populator>();
-        items = schedule_populator.master_schedule;
-        RenderSchedule(items);
+        items = schedule_populator.current_schedule;
+    }
 
+    void Update()
+    {
+        RenderSchedule(items);
         Scroll(scroll_input);
     }
 
