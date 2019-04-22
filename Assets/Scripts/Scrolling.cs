@@ -25,6 +25,7 @@ public class Scrolling : MonoBehaviour
             if (GetWorldRect(rect_transform, Vector2.one).Contains(touch.position))
             {
                 //Debug.Log("Moved " + rect_transform.name + " " + dist + "Units.");
+                rect_transform.Translate(0, dist, 0);
             }
         }
     }
