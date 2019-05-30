@@ -19,7 +19,7 @@ public class Create_Event : MonoBehaviour
     public Text input_task_new;
     public Transform task_root;
     public GameObject event_base;
-    private List<string> input_task_list;
+    public List<string> input_task_list;
     
     public Text example_title;
     public Image example_icon;
