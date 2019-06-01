@@ -12,15 +12,16 @@ public class Input : MonoBehaviour
     private bool passed_threshold;
     public float swipe_threshold;
 
+    public GameObject global_script_container;
     private Transition transition;
     private Scrolling scrolling;
+
 
     // Finds the Transition & Scrolling scripts and assigns it
     private void Start()
     {
-        GameObject container = GameObject.Find("Script Container");
-        transition = container.GetComponent<Transition>();
-        scrolling = container.GetComponent<Scrolling>();
+        transition = global_script_container.GetComponent<Transition>();
+        scrolling = global_script_container.GetComponent<Scrolling>();
     }
 
     // Seperates Touch inputs

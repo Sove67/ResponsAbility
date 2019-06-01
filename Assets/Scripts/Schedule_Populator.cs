@@ -23,28 +23,24 @@ public class Schedule_Populator : MonoBehaviour
         public string name { get; set; }
         public string next_appearance { get; set; }
         public string start { get; set; }
-        public string end { get; set; }
+        public string duration { get; set; }
         public string interval { get; set; }
         public int? icon { get; set; }
-        public bool completable { get; set; }
-        public bool calendar { get; set; }
         public List<string> children { get; set; }
         public bool reset { get; set; }
-        public bool ordered { get; set; }
+        public bool calendar { get; set; }
 
-        public ItemCreate(string name, string start, string end, string next_appearance, string interval, int? icon, bool completable, bool calendar, List<string> children, bool reset, bool ordered)
+        public ItemCreate(string name, string start, string duration, string next_appearance, string interval, int? icon, List<string> children, bool reset, bool calendar)
         {
             this.name = name;
             this.start = start;
-            this.end = end;
+            this.duration = duration;
             this.next_appearance = next_appearance;
             this.interval = interval;
             this.icon = icon;
-            this.completable = completable;
-            this.calendar = calendar;
             this.children = children;
             this.reset = reset;
-            this.ordered = ordered;
+            this.calendar = calendar;
         }
     }
 
@@ -71,19 +67,17 @@ public class Schedule_Populator : MonoBehaviour
         {
             Debug.Log("Name: " + component.name);
             Debug.Log("Start: " + component.start + " (24HR Format)");
-            Debug.Log("End: " + component.end + " (24HR Format)");
+            Debug.Log("Duration: " + component.duration + " (24HR Format)");
             Debug.Log("Next Appearance: " + component.next_appearance + " (MMDD Format)");
             Debug.Log("Interval: " + component.interval + " Days");
             Debug.Log("Icon Index: " + component.icon);
-            Debug.Log("Is Completable: " + component.completable);
-            Debug.Log("Is Shown On Calendar: " + component.calendar);
             if (component.children != null)
             {
                 Debug.Log(component.name + " Child Tasks:");
                 foreach (var child in component.children) { Debug.Log(child); }
             }
             Debug.Log("Resets: " + component.reset);
-            Debug.Log("Ordered: " + component.ordered);
+            Debug.Log("Is Shown On Calendar: " + component.calendar);
         }
     }
 }

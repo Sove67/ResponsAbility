@@ -35,17 +35,17 @@ public class Consistent_Text : MonoBehaviour
     {
         // Get the first one
         if (m_TextList.Length > 0)
-            m_Size = m_TextList[0].cachedTextGenerator.fontSizeUsedForBestFit;
+        { m_Size = m_TextList[0].fontSize; }
 
         // See if any are smaller
         foreach (var item in m_TextList)
         {
             if (item.fontSize < m_Size)
-                m_Size = item.cachedTextGenerator.fontSizeUsedForBestFit;
+            { m_Size = item.fontSize; }
         }
 
         // Apply as max size to all of the images
         foreach (var item in m_TextList)
-            item.resizeTextMaxSize = m_Size;
+        { item.resizeTextMaxSize = m_Size; }
     }
 }
