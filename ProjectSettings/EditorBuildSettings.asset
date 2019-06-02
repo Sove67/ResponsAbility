@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Calendar & Schedule.unity
+    guid: 468ee3d3488094241aa991e60d632506
   m_configObjects: {}
