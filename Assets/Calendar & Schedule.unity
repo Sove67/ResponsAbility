@@ -1838,11 +1838,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 956515587}
         m_MethodName: Interval
-        m_Mode: 5
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: +1
           m_BoolArgument: 0
@@ -2253,6 +2253,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 956515587}
+        m_MethodName: ResetValues
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: icon
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &349197611
@@ -2586,6 +2597,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 956515587}
+        m_MethodName: ResetValues
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: interval
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -2929,11 +2951,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 956515587}
         m_MethodName: Interval
-        m_Mode: 5
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: -1
           m_FloatArgument: 0
           m_StringArgument: -1
           m_BoolArgument: 0
@@ -4829,6 +4851,7 @@ GameObject:
   - component: {fileID: 734834631}
   - component: {fileID: 734834630}
   - component: {fileID: 734834629}
+  - component: {fileID: 734834632}
   m_Layer: 5
   m_Name: Create Event
   m_TagString: Untagged
@@ -4905,6 +4928,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 734834627}
   m_CullTransparentMesh: 0
+--- !u!114 &734834632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734834627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c65d3e7b53b4b64da3478ab8e83b32c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  input_name: {fileID: 1032179075}
+  input_date: {fileID: 843878674}
+  input_start: {fileID: 142138202}
+  input_duration: {fileID: 1482963996}
+  input_interval: {fileID: 680359543}
+  input_icon: 0
+  child_tasks: []
+  input_task_reset: {fileID: 1782828940}
+  input_calendar: {fileID: 1469642293}
+  global_script_container: {fileID: 1149792612}
 --- !u!1 &751448609
 GameObject:
   m_ObjectHideFlags: 0
@@ -6852,6 +6897,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: 0
   interval: 0
+  date_month: {fileID: 1987799542}
+  date_day: {fileID: 1960576235}
+  date_year: {fileID: 1598900098}
+  time_hour: {fileID: 1620037031}
+  time_min: {fileID: 1911207439}
+  duration_hour: {fileID: 1769519236}
+  duration_min: {fileID: 2129759594}
+  interval_day: {fileID: 1832664747}
 --- !u!1 &958206910
 GameObject:
   m_ObjectHideFlags: 0
@@ -8141,6 +8194,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 956515587}
+        m_MethodName: ResetValues
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: task
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -9953,6 +10017,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 956515587}
+        m_MethodName: ResetValues
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: date
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1304308748
@@ -10247,6 +10322,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 956515587}
+        m_MethodName: ResetValues
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: time
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -13759,12 +13845,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1977565103}
-  - component: {fileID: 1977565107}
   - component: {fileID: 1977565105}
   - component: {fileID: 1977565108}
   - component: {fileID: 1977565104}
   m_Layer: 5
-  m_Name: Event Creator Script Container
+  m_Name: Text Sizer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13826,28 +13911,6 @@ MonoBehaviour:
   - {fileID: 1505680812}
   - {fileID: 758736381}
   - {fileID: 427576835}
---- !u!114 &1977565107
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1977565102}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c65d3e7b53b4b64da3478ab8e83b32c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  input_name: {fileID: 1032179075}
-  input_date: {fileID: 843878674}
-  input_start: {fileID: 142138202}
-  input_duration: {fileID: 1482963996}
-  input_interval: {fileID: 680359543}
-  input_icon: 0
-  child_tasks: []
-  input_task_reset: {fileID: 1782828940}
-  input_calendar: {fileID: 1469642293}
-  global_script_container: {fileID: 1149792612}
 --- !u!114 &1977565108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15206,6 +15269,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 956515587}
+        m_MethodName: ResetValues
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: duration
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,

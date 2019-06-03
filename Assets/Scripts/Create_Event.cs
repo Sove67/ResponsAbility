@@ -25,21 +25,6 @@ public class Create_Event : MonoBehaviour
         master = schedule_populator.master_schedule;
     }
 
-    private void Update()
-    {
-        SyncVariables();
-    }
-
-    void SyncVariables()
-    {
-        // Set these to the custom input script's variables
-        input_date = null;
-        input_start = null;
-        input_duration = null;
-        input_interval = null;
-        input_icon = 1;
-    }
-
     public void ChangeColour(int colour)
     {
 
