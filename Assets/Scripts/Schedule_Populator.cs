@@ -25,12 +25,12 @@ public class Schedule_Populator : MonoBehaviour
         public string start { get; set; }
         public string duration { get; set; }
         public string interval { get; set; }
-        public int? icon { get; set; }
+        public int icon { get; set; }
         public List<string> children { get; set; }
         public bool reset { get; set; }
         public bool calendar { get; set; }
 
-        public ItemCreate(string name, string start, string duration, string next_appearance, string interval, int? icon, List<string> children, bool reset, bool calendar)
+        public ItemCreate(string name, string start, string duration, string next_appearance, string interval, int icon, List<string> children, bool reset, bool calendar)
         {
             this.name = name;
             this.start = start;

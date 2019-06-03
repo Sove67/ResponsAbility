@@ -10,7 +10,7 @@ public class Create_Event : MonoBehaviour
     public Text input_start;
     public Text input_duration;
     public Text input_interval;
-    public int? input_icon;
+    public int input_icon;
     public List<string> child_tasks;
     public Toggle input_task_reset;
     public Toggle input_calendar;
@@ -37,7 +37,7 @@ public class Create_Event : MonoBehaviour
         input_start = null;
         input_duration = null;
         input_interval = null;
-        input_icon = null;
+        input_icon = 1;
     }
 
     public void ChangeColour(int colour)
