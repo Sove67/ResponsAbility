@@ -1512,7 +1512,7 @@ GameObject:
   - component: {fileID: 296300621}
   - component: {fileID: 296300620}
   m_Layer: 5
-  m_Name: Ok
+  m_Name: Confirm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1587,6 +1587,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 956515587}
+        m_MethodName: SyncValue
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: date
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -4941,10 +4952,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   input_name: {fileID: 1032179075}
-  input_date: {fileID: 843878674}
-  input_start: {fileID: 142138202}
-  input_duration: {fileID: 1482963996}
-  input_interval: {fileID: 680359543}
+  input_interval: 0
   input_icon: 0
   child_tasks: []
   input_task_reset: {fileID: 1782828940}
@@ -5411,7 +5419,7 @@ GameObject:
   - component: {fileID: 838205116}
   - component: {fileID: 838205115}
   m_Layer: 5
-  m_Name: Ok
+  m_Name: Confirm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5486,6 +5494,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 956515587}
+        m_MethodName: SyncValue
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: time
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -6395,7 +6414,7 @@ GameObject:
   - component: {fileID: 916359236}
   - component: {fileID: 916359235}
   m_Layer: 5
-  m_Name: Ok
+  m_Name: Confirm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6470,6 +6489,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 956515587}
+        m_MethodName: SyncValue
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: interval
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -6905,6 +6935,11 @@ MonoBehaviour:
   duration_hour: {fileID: 1769519236}
   duration_min: {fileID: 2129759594}
   interval_day: {fileID: 1832664747}
+  date_display: {fileID: 843878674}
+  time_display: {fileID: 142138202}
+  duration_display: {fileID: 1482963996}
+  interval_display: {fileID: 680359543}
+  create_event_container: {fileID: 734834627}
 --- !u!1 &958206910
 GameObject:
   m_ObjectHideFlags: 0
@@ -7399,7 +7434,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 734834632}
         m_MethodName: CreateEvent
         m_Mode: 1
         m_Arguments:
@@ -9653,7 +9688,7 @@ GameObject:
   - component: {fileID: 1262911615}
   - component: {fileID: 1262911614}
   m_Layer: 5
-  m_Name: Ok
+  m_Name: Confirm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9728,6 +9763,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 956515587}
+        m_MethodName: SyncValue
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: icon
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -10747,7 +10793,7 @@ GameObject:
   - component: {fileID: 1425442864}
   - component: {fileID: 1425442863}
   m_Layer: 5
-  m_Name: Ok
+  m_Name: Confirm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10822,6 +10868,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 956515587}
+        m_MethodName: SyncValue
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: duration
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -12120,7 +12177,7 @@ GameObject:
   - component: {fileID: 1735754954}
   - component: {fileID: 1735754953}
   m_Layer: 5
-  m_Name: Ok
+  m_Name: Confirm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12195,6 +12252,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 956515587}
+        m_MethodName: SyncValue
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: task
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
