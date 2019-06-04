@@ -6,12 +6,15 @@ using UnityEngine.UI;
 public class Create_Event : MonoBehaviour
 {
     public Text input_name;
-    public Text input_date;
-    public Text input_start;
-    public Text input_duration;
-    public Text input_interval;
+
+    public System.DateTime input_date;
+    public System.DateTime input_time;
+    public System.TimeSpan input_duration;
+    public int input_interval;
     public int input_icon;
+
     public List<string> child_tasks;
+
     public Toggle input_task_reset;
     public Toggle input_calendar;
 
@@ -32,7 +35,7 @@ public class Create_Event : MonoBehaviour
 
     public void CreateEvent()
     {
-        master.Add(new Schedule_Populator.ItemCreate(input_name.text, input_start.text, input_duration.text, input_date.text, input_interval.text,
+        master.Add(new Schedule_Populator.ItemCreate(input_name.text, input_time, input_date, input_duration, input_interval,
                                                 input_icon, child_tasks, input_calendar.isOn, input_task_reset.isOn));
         schedule_populator.PopulateDay();
         schedule_populator.DebugSchedule(master);
