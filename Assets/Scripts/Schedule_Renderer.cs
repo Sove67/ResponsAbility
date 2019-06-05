@@ -26,8 +26,8 @@ public class Schedule_Renderer : MonoBehaviour
         //Render the schedule in order of start time
         foreach (var item in items)
         {
-            var hour = int.Parse(item.start.ToString("HH"));
-            var minute = int.Parse(item.start.ToString("mm"));
+            var hour = int.Parse(item.beginning.ToString("HH"));
+            var minute = int.Parse(item.beginning.ToString("mm"));
 
             Debug.Log("Name: " + item + "Hour: " + hour + "Minute: " + minute);
         }

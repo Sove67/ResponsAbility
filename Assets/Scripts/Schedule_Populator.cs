@@ -20,24 +20,26 @@ public class Schedule_Populator : MonoBehaviour
     // This class and its functon are used to create a schedule item.
     public class ItemCreate
     {
-        public string name { get; set; }
+        public string title { get; set; }
+        public int icon { get; set; }
+        public Color colour { get; set; }
         public System.DateTime next_appearance { get; set; }
-        public System.DateTime start { get; set; }
+        public System.DateTime beginning { get; set; }
         public System.TimeSpan duration { get; set; }
         public int interval { get; set; }
-        public int icon { get; set; }
         public List<string> children { get; set; }
         public bool reset { get; set; }
         public bool calendar { get; set; }
 
-        public ItemCreate(string name, System.DateTime next_appearance, System.DateTime start, System.TimeSpan duration, int interval, int icon, List<string> children, bool reset, bool calendar)
+        public ItemCreate(string title, int icon, Color colour, System.DateTime next_appearance, System.DateTime beginning, System.TimeSpan duration, int interval, List<string> children, bool reset, bool calendar)
         {
-            this.name = name;
+            this.title = title;
+            this.icon = icon;
+            this.colour = colour;
             this.next_appearance = next_appearance;
-            this.start = start;
+            this.beginning = beginning;
             this.duration = duration;
             this.interval = interval;
-            this.icon = icon;
             this.children = children;
             this.reset = reset;
             this.calendar = calendar;
@@ -62,21 +64,34 @@ public class Schedule_Populator : MonoBehaviour
     // Prints each part of the selected schedule to console
     public void DebugSchedule(List<ItemCreate> schedule)
     {
-        foreach (var component in schedule)
+        Debug.Log("Debugging Schedule:");
+
+        foreach (var task in schedule)
         {
-            Debug.Log("Name: " + component.name);
-            Debug.Log("Start: " + component.start.ToString("t"));
-            Debug.Log("Duration: " + component.duration.ToString());
-            Debug.Log("Next Appearance: " + component.next_appearance.ToString("D"));
-            Debug.Log("Interval: " + component.interval.ToString() + " Day(s)");
-            Debug.Log("Icon Index: " + component.icon);
-            if (component.children != null)
+            Debug.Log("Title: " + task.title);
+            Debug.Log("Icon Index: " + task.icon);
+            Debug.Log("Colour: " + task.colour);
+
+            Debug.Log(" ");
+            Debug.Log("Next Appearance (Date): " + task.next_appearance.ToString("D"));
+            Debug.Log("Beginning: " + task.beginning.ToString("t"));
+            Debug.Log("Duration: " + task.duration.ToString());
+            Debug.Log("Interval: " + task.interval.ToString() + " Day(s)");
+
+            Debug.Log(" ");
+            if (task.children.Count != 0)
             {
-                Debug.Log(component.name + " Child Tasks:");
-                foreach (var child in component.children) { Debug.Log(child); }
+                Debug.Log("'" + task.title + "'" + " Child Tasks:");
+                Debug.Log("Resets: " + task.reset);
+                foreach (var childtitle in task.children) { Debug.Log(childtitle); }
             }
-            Debug.Log("Is Shown On Calendar: " + component.calendar);
-            Debug.Log("Resets: " + component.reset);
+            else
+            { Debug.Log("Sub-Tasks Not Applicable"); }
+
+            Debug.Log(" ");
+            Debug.Log("Is Shown On Calendar: " + task.calendar);
+
+            Debug.Log(" ");
         }
     }
 }

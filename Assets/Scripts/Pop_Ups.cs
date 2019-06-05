@@ -5,10 +5,17 @@ using UnityEngine.UI;
 
 public class Pop_Ups : MonoBehaviour
 {
+    /* Pop_Ups.cs handles any button involved, in the opening, closing, or operation of "Pop-Up Menus".
+     * This covers:
+     *      Icons
+     *      The Date
+     *      The Start of The Task
+    */
+
     // Variables for the currently selected settings
     public int icon;
     public System.DateTime date;
-    public System.DateTime time;
+    public System.DateTime beginning;
     public System.TimeSpan duration;
     public int interval;
 
@@ -16,9 +23,9 @@ public class Pop_Ups : MonoBehaviour
     public Text date_month;
     public Text date_day;
     public Text date_year;
-    public Text time_hour;
-    public Text time_min;
-    public Text time_half;
+    public Text beginning_hour;
+    public Text beginning_min;
+    public Text beginning_half;
     public Text duration_hour;
     public Text duration_min;
     public Text interval_day;
@@ -37,7 +44,6 @@ public class Pop_Ups : MonoBehaviour
     public void Start()
     {
         create_event = create_event_container.GetComponent<Create_Event>();
-
         ResetValues("all");
         UpdateDisplay();
     }
@@ -60,16 +66,16 @@ public class Pop_Ups : MonoBehaviour
 
         if (modifier.Substring(0,1) == "-") {
 
-            if (month - int.Parse(modifier.Substring(1, 2)) >= 0)
+            if (month - int.Parse(modifier.Substring(1, 2)) >= 1)
             { month -= int.Parse(modifier.Substring(1, 2)); }
             
-            if (day - int.Parse(modifier.Substring(3, 2)) >= 0)
+            if (day - int.Parse(modifier.Substring(3, 2)) >= 1)
             { day -= int.Parse(modifier.Substring(3, 2)); }
 
-            if (year - int.Parse(modifier.Substring(5, 4)) >= 0)
+            if (year - int.Parse(modifier.Substring(5, 4)) >= 1)
             { year -= int.Parse(modifier.Substring(5, 4)); }
 
-            string result = (month.ToString().PadLeft(2, '0') + day.ToString().PadLeft(2, '0') + year.ToString().PadLeft(2, '0'));
+            string result = (month.ToString().PadLeft(2, '0') + day.ToString().PadLeft(2, '0') + year.ToString().PadLeft(4, '0'));
             date = System.DateTime.ParseExact(result, "MMddyyyy", null, System.Globalization.DateTimeStyles.NoCurrentDateDefault);
         }
 
@@ -90,9 +96,9 @@ public class Pop_Ups : MonoBehaviour
     }
 
     // +/- 1 from hour or minute based on which button was pressed, then recompile the result into a DateTime 
-    public void Time(string modifier)
+    public void Beginning(string modifier)
     {
-        string str = time.ToString("HHmm");
+        string str = beginning.ToString("HHmm");
         int hour = int.Parse(str.Substring(0, 2));
         int minute = int.Parse(str.Substring(2, 2));
 
@@ -106,28 +112,28 @@ public class Pop_Ups : MonoBehaviour
             { minute -= int.Parse(modifier.Substring(3, 2)); }
 
             string result = (hour.ToString().PadLeft(2, '0') + minute.ToString().PadLeft(2, '0'));
-            time = System.DateTime.ParseExact(result, "HHmm", null, System.Globalization.DateTimeStyles.NoCurrentDateDefault);
+            beginning = System.DateTime.ParseExact(result, "HHmm", null, System.Globalization.DateTimeStyles.NoCurrentDateDefault);
         }
 
         else if (modifier.Substring(0, 1) == "+")
         {
             // if the calculation doesnt make the time overflow
-            if (hour + int.Parse(modifier.Substring(1, 2)) <= 24)
+            if (hour + int.Parse(modifier.Substring(1, 2)) <= 23)
             { hour += int.Parse(modifier.Substring(1, 2)); }
 
-            if (minute + int.Parse(modifier.Substring(3, 2)) <= 60)
+            if (minute + int.Parse(modifier.Substring(3, 2)) <= 59)
             { minute += int.Parse(modifier.Substring(3, 2)); }
 
             string result = (hour.ToString().PadLeft(2, '0') + minute.ToString().PadLeft(2, '0'));
-            time = System.DateTime.ParseExact(result, "HHmm", null, System.Globalization.DateTimeStyles.NoCurrentDateDefault);
+            beginning = System.DateTime.ParseExact(result, "HHmm", null, System.Globalization.DateTimeStyles.NoCurrentDateDefault);
         }
         UpdateDisplay();
     }
-
+    
     // +/- 1 from hour or minute based on which button was pressed, then recompile the result into a TimeSpan 
     public void Duration(string modifier)
     {
-        string str = time.ToString("HHmm");
+        string str = duration.ToString("hhmm");
         int hour = int.Parse(str.Substring(0, 2));
         int minute = int.Parse(str.Substring(2, 2));
 
@@ -166,8 +172,7 @@ public class Pop_Ups : MonoBehaviour
         { interval += modifier; }
         UpdateDisplay();
     }
-
-
+    
     // Update the Pop-Up menu displays
     public void UpdateDisplay()
     {
@@ -176,9 +181,9 @@ public class Pop_Ups : MonoBehaviour
         //Then, after the correct string has been gotten, the space needs to be removed.
         date_day.text = date.ToString("d ").Remove(date.ToString("d ").Length - 1);
         date_year.text = date.ToString("yyyy");
-        time_hour.text = time.ToString("h ").Remove(time.ToString("h ").Length - 1);
-        time_min.text = time.ToString("mm");
-        time_half.text = time.ToString("tt");
+        beginning_hour.text = beginning.ToString("h ").Remove(beginning.ToString("h ").Length - 1);
+        beginning_min.text = beginning.ToString("mm");
+        beginning_half.text = beginning.ToString("tt");
         duration_hour.text = duration.ToString("%h");
         duration_min.text = duration.ToString("mm");
         interval_day.text = (interval.ToString() + " Day(s)");
@@ -190,7 +195,7 @@ public class Pop_Ups : MonoBehaviour
         {
             icon = 1;
             date = System.DateTime.Today;
-            time = System.DateTime.Today;
+            beginning = System.DateTime.Today;
             duration = System.TimeSpan.Zero;
             interval = 0;
         }
@@ -202,7 +207,7 @@ public class Pop_Ups : MonoBehaviour
         { date = System.DateTime.Today; }
 
         if (choice == "time")
-        { time = System.DateTime.Now; }
+        { beginning = System.DateTime.Now; }
 
         if (choice == "duration")
         { duration = System.TimeSpan.Zero; }
@@ -211,44 +216,5 @@ public class Pop_Ups : MonoBehaviour
         { interval = 0; }
 
         UpdateDisplay();
-    }
-
-    public void SyncValue(string choice)
-    {
-        if (choice == "all")
-        {
-            create_event.input_icon = icon;
-            create_event.input_date = date;
-            create_event.input_time = time;
-            create_event.input_duration = duration;
-            create_event.input_interval = interval;
-        }
-
-        if (choice == "icon")
-        { create_event.input_icon = icon; }
-
-        if (choice == "date")
-        {
-            create_event.input_date = date;
-            date_display.text = date.ToString("ddd, MMM d, yyyy");
-        }
-
-        if (choice == "time")
-        {
-            create_event.input_time = time;
-            time_display.text = time.ToString("h:mm tt");
-        }
-
-        if (choice == "duration")
-        {
-            create_event.input_duration = duration;
-            duration_display.text = (duration.TotalHours.ToString() + " Hour(s), " + duration.TotalMinutes.ToString() + " Minute(s)");
-        }
-
-        if (choice == "interval")
-        {
-            create_event.input_interval = interval;
-            interval_display.text = (interval.ToString() + " Day(s)");
-        }
     }
 }
