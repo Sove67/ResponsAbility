@@ -4,16 +4,35 @@ using UnityEngine;
 
 public class Scrolling : MonoBehaviour
 {
-    public List<RectTransform> areas = new List<RectTransform>();
+    public int current_layer = 1;
+    public List<RectTransform> layer_1 = new List<RectTransform>();
+    public List<RectTransform> layer_2 = new List<RectTransform>();
+    
+    public void SetLayer(int choice)
+    {
+        current_layer = choice;
+    }
 
     // Handles scrolling using vertical swipes
     public void Swipe(float dist, Touch touch)
     {
-        // Check each RectTransform in the "areas" list for touch events, and moves it based on "Input.cs" calculations
-        foreach (var rect in areas)
+        if (current_layer == 1)
         {
-            if (GetWorldRect(rect, Vector2.one).Contains(touch.position))
-            { rect.Translate(0, dist, 0); }
+            // Check each RectTransform in the "areas" list for touch events, and moves it based on "Input.cs" calculations
+            foreach (var rect in layer_1)
+            {
+                if (GetWorldRect(rect, Vector2.one).Contains(touch.position))
+                { rect.Translate(0, dist, 0); }
+            }
+        }
+        else if (current_layer == 2)
+        {
+            // Check each RectTransform in the "areas" list for touch events, and moves it based on "Input.cs" calculations
+            foreach (var rect in layer_2)
+            {
+                if (GetWorldRect(rect, Vector2.one).Contains(touch.position))
+                { rect.Translate(0, dist, 0); }
+            }
         }
     }
 

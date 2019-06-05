@@ -18,6 +18,7 @@ public class Pop_Ups : MonoBehaviour
     public Text date_year;
     public Text time_hour;
     public Text time_min;
+    public Text time_half;
     public Text duration_hour;
     public Text duration_min;
     public Text interval_day;
@@ -175,8 +176,9 @@ public class Pop_Ups : MonoBehaviour
         //Then, after the correct string has been gotten, the space needs to be removed.
         date_day.text = date.ToString("d ").Remove(date.ToString("d ").Length - 1);
         date_year.text = date.ToString("yyyy");
-        time_hour.text = time.ToString("H ").Remove(time.ToString("H ").Length - 1);
+        time_hour.text = time.ToString("h ").Remove(time.ToString("h ").Length - 1);
         time_min.text = time.ToString("mm");
+        time_half.text = time.ToString("tt");
         duration_hour.text = duration.ToString("%h");
         duration_min.text = duration.ToString("mm");
         interval_day.text = (interval.ToString() + " Day(s)");
@@ -246,7 +248,7 @@ public class Pop_Ups : MonoBehaviour
         if (choice == "interval")
         {
             create_event.input_interval = interval;
-            interval_display.text = interval.ToString();
+            interval_display.text = (interval.ToString() + " Day(s)");
         }
     }
 }
