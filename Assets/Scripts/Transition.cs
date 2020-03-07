@@ -4,123 +4,78 @@ using UnityEngine;
 
 public class Transition : MonoBehaviour
 {
-    public RectTransform ui_container;
-    public int transition_threshold;
-    public RectTransform transition_distance_reference;
-    private string transition_state;
+    // Variables
+    // UI Properties
+    public int transitionThreshold;
+    public bool screenLock;
+    public float revertSpeed;
+    private RectTransform panelContainer;
 
-    public bool screen_lock;
-    public int revert_speed;
-    private Vector2 old_pos;
-    private int page;
+    // Calculations
+    public int page = 2;
+    public float oldPositionX;
+    private float totalDist = 0;
 
-    // Initializes a couple variables
+    // Functions
     private void Start()
     {
-        old_pos = ui_container.position;
+        panelContainer = this.GetComponent<RectTransform>();
+        oldPositionX = panelContainer.anchoredPosition.x;
+        panelContainer.anchoredPosition = panelContainer.anchoredPosition;
     }
 
-    public void SetLock(bool choice)
-    { screen_lock = choice; }
+    public void SetLock(bool choice) // Locks the screen from transitioning
+    { screenLock = choice; }
 
-    // Handles transitions using horizontal swipes
-    public void Swipe(float dist, Touch touch)
+    public void Swipe(float dist, Touch touch) // Handles transitions using horizontal swipes
     {
-        if (!screen_lock)
+        if (!screenLock)
         {
-            ui_container.Translate(dist, 0, 0);
-
+            panelContainer.anchoredPosition = new Vector2(panelContainer.anchoredPosition.x + dist, panelContainer.anchoredPosition.y);
+            totalDist += dist;
             if (touch.phase == TouchPhase.Ended)
             {
-                if (page == 1)
+                // Swipe Right
+                if (oldPositionX - panelContainer.anchoredPosition.x > transitionThreshold && page + 1 < 4)
                 {
-                    //Swipe Right
-                    if (old_pos.x - ui_container.position.x > transition_threshold)
-                    {
-                        ui_container.SetPositionAndRotation(new Vector2(old_pos.x + GetWorldRect(transition_distance_reference, Vector2.one).width, ui_container.position.y), new Quaternion());
-                        old_pos = ui_container.position;
-                        page = 2;
-                    }
+                    StartCoroutine(MoveToXPosition(oldPositionX - panelContainer.rect.width));
+                    page += 1;
                 }
-                else if (page == 2)
+
+                // Swipe Left
+                else if (oldPositionX - panelContainer.anchoredPosition.x < -transitionThreshold && page - 1 > 0)
                 {
-                    //Swipe Right
-                    if (old_pos.x - ui_container.position.x > transition_threshold)
-                    {
-
-                        ui_container.SetPositionAndRotation(new Vector2(old_pos.x + GetWorldRect(transition_distance_reference, Vector2.one).width, ui_container.position.y), new Quaternion());
-                        old_pos = ui_container.position;
-                        page = 3;
-                    }
-                    //Swipe Left
-                    if (old_pos.x - ui_container.position.x < transition_threshold)
-                    {
-
-                        ui_container.SetPositionAndRotation(new Vector2(old_pos.x + GetWorldRect(transition_distance_reference, Vector2.one).width, ui_container.position.y), new Quaternion());
-                        old_pos = ui_container.position;
-                        page = 1;
-                    }
-                }
-                else if (page == 3)
-                {
-                    //Swipe Left
-                    if (old_pos.x - ui_container.position.x < transition_threshold)
-                    {
-
-                        ui_container.SetPositionAndRotation(new Vector2(old_pos.x + GetWorldRect(transition_distance_reference, Vector2.one).width, ui_container.position.y), new Quaternion());
-                        old_pos = ui_container.position;
-                        page = 2;
-                    }
+                    StartCoroutine(MoveToXPosition(oldPositionX + panelContainer.rect.width));
+                    page += -1;
                 }
 
                 else
-                { StartCoroutine(ReturnToPos()); }
+                { StartCoroutine(MoveToXPosition(oldPositionX));  }
+                totalDist = 0;
             }
         }
     }
 
-    // This function loops when called, gradually bringing the ui_container back to one of 3 centered position before returning a "yield break".
-    private IEnumerator ReturnToPos()
+    public IEnumerator MoveToXPosition(float targetX)
     {
-        float distance = old_pos.x - ui_container.position.x;
+        float distance = targetX - panelContainer.anchoredPosition.x;
 
-        if (distance == 0)
-        { yield break; }
-
-        yield return 0;
-
-        if (distance < 0)
+        while(distance < -revertSpeed || revertSpeed < distance)
         {
-            if (distance + revert_speed <= 0)
-            { ui_container.Translate(-revert_speed, 0, 0); }
-            
-            else if (distance != 0)
-            { ui_container.Translate(distance, 0, 0); }
+            // Move Left 
+            if (distance > 0 && panelContainer.anchoredPosition.x + revertSpeed <= targetX)
+            { panelContainer.anchoredPosition += new Vector2(revertSpeed, 0); }
+
+            // Move Right
+            else if (distance < 0 && panelContainer.anchoredPosition.x - revertSpeed >= targetX)
+            { panelContainer.anchoredPosition += new Vector2(-revertSpeed, 0); }
+
+            distance = targetX - panelContainer.anchoredPosition.x;
+            yield return new WaitForSeconds(.01f);
         }
 
-        else if (distance > 0)
-        {
-            if (distance - revert_speed >= 0)
-            { ui_container.Translate(revert_speed, 0, 0); }
-
-            else if (distance != 0)
-            { ui_container.Translate(distance, 0, 0); }
-        }
-
-        StartCoroutine(ReturnToPos());
-    }
-
-    // Code taken from Ash-Blue's accepted answer at https://answers.unity.com/questions/1100493/convert-recttransformrect-to-rect-world.html
-    static public Rect GetWorldRect(RectTransform rt, Vector2 scale)
-    {
-        // Convert the rectangle to world corners and grab the top left
-        Vector3[] corners = new Vector3[4];
-        rt.GetWorldCorners(corners);
-        Vector3 topLeft = corners[0];
-
-        // Rescale the size appropriately based on the current Canvas scale
-        Vector2 scaledSize = new Vector2(scale.x * rt.rect.size.x, scale.y * rt.rect.size.y);
-
-        return new Rect(topLeft, scaledSize);
+        panelContainer.anchoredPosition = new Vector2(targetX, panelContainer.anchoredPosition.y);
+        oldPositionX = panelContainer.anchoredPosition.x;
+        yield break;
     }
 }

@@ -12,17 +12,8 @@ public class Input : MonoBehaviour
     private bool passed_threshold;
     public float swipe_threshold;
 
-    public GameObject global_script_container;
-    private Transition transition;
-    private Scrolling scrolling;
-
-
-    // Finds the Transition & Scrolling scripts and assigns it
-    private void Start()
-    {
-        transition = global_script_container.GetComponent<Transition>();
-        scrolling = global_script_container.GetComponent<Scrolling>();
-    }
+    public Transition Transition;
+    public Scrolling Scrolling;
 
     // Seperates Touch inputs
     void Update()
@@ -62,12 +53,12 @@ public class Input : MonoBehaviour
         { horizontal_dist = (finger_now.x - finger_last.x); }
 
         // Vertical Swipe
-        if (Mathf.Abs(finger_now.y - finger_last.y) > Mathf.Abs(finger_now.x - finger_last.x))
+        else if (Mathf.Abs(finger_now.y - finger_last.y) > Mathf.Abs(finger_now.x - finger_last.x))
         { vertical_dist = (finger_now.y - finger_last.y); }
 
         // Sends Values to their handlers
-        transition.Swipe(horizontal_dist, touch);
-        scrolling.Swipe(vertical_dist, touch);
+        Transition.Swipe(horizontal_dist, touch);
+        Scrolling.Swipe(vertical_dist, touch);
 
         // Updates touch position
         finger_last = finger_now;
