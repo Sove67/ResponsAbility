@@ -72,5 +72,4 @@ public class Input : MonoBehaviour
         // Updates touch position
         finger_last = finger_now;
     }
-
 }

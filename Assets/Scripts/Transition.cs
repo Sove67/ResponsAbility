@@ -12,15 +12,12 @@ public class Transition : MonoBehaviour
     public bool screen_lock;
     public int revert_speed;
     private Vector2 old_pos;
-    private Quaternion old_rot;
-    private bool can_move_left = true;
-    private bool can_move_right = true;
+    private int page;
 
     // Initializes a couple variables
     private void Start()
     {
         old_pos = ui_container.position;
-        old_rot = ui_container.rotation;
     }
 
     public void SetLock(bool choice)
@@ -35,48 +32,46 @@ public class Transition : MonoBehaviour
 
             if (touch.phase == TouchPhase.Ended)
             {
-                // Left Position && Right Swipe
-                if (!can_move_left && can_move_right && old_pos.x - ui_container.position.x < -transition_threshold)
+                if (page == 1)
                 {
-                    ui_container.SetPositionAndRotation(new Vector2(old_pos.x + GetWorldRect(transition_distance_reference, Vector2.one).width, ui_container.position.y), ui_container.rotation);
-                    old_pos = ui_container.position;
-                    old_rot = ui_container.rotation;
-                    can_move_left = true;
-                }
-
-                // Middle Position
-                else if (can_move_left && can_move_right)
-                {
-                    // Right Swipe
-                    if (old_pos.x - ui_container.position.x < -transition_threshold)
+                    //Swipe Right
+                    if (old_pos.x - ui_container.position.x > transition_threshold)
                     {
-                        ui_container.SetPositionAndRotation(new Vector2(old_pos.x + GetWorldRect(transition_distance_reference, Vector2.one).width, ui_container.position.y), ui_container.rotation);
+                        ui_container.SetPositionAndRotation(new Vector2(old_pos.x + GetWorldRect(transition_distance_reference, Vector2.one).width, ui_container.position.y), new Quaternion());
                         old_pos = ui_container.position;
-                        old_rot = ui_container.rotation;
-                        can_move_right = false;
-                    }
-
-                    // Left Swipe
-                    else if (old_pos.x - ui_container.position.x > transition_threshold)
-                    {
-                        ui_container.SetPositionAndRotation(new Vector2(old_pos.x - GetWorldRect(transition_distance_reference, Vector2.one).width, ui_container.position.y), ui_container.rotation);
-                        old_pos = ui_container.position;
-                        old_rot = ui_container.rotation;
-                        can_move_left = false;
+                        page = 2;
                     }
                 }
-
-                // Right Position && Left Swipe
-                else if (can_move_left && !can_move_right && old_pos.x - ui_container.position.x > transition_threshold)
+                else if (page == 2)
                 {
-                    ui_container.SetPositionAndRotation(new Vector2(old_pos.x - GetWorldRect(transition_distance_reference, Vector2.one).width, ui_container.position.y), ui_container.rotation);
-                    old_pos = ui_container.position;
-                    old_rot = ui_container.rotation;
-                    can_move_right = true;
-                }
+                    //Swipe Right
+                    if (old_pos.x - ui_container.position.x > transition_threshold)
+                    {
 
-                if (old_pos.x - ui_container.position.x > -transition_threshold && old_pos.x - ui_container.position.x < transition_threshold)
-                { StartCoroutine(ReturnToPos()); }
+                        ui_container.SetPositionAndRotation(new Vector2(old_pos.x + GetWorldRect(transition_distance_reference, Vector2.one).width, ui_container.position.y), new Quaternion());
+                        old_pos = ui_container.position;
+                        page = 3;
+                    }
+                    //Swipe Left
+                    if (old_pos.x - ui_container.position.x < transition_threshold)
+                    {
+
+                        ui_container.SetPositionAndRotation(new Vector2(old_pos.x + GetWorldRect(transition_distance_reference, Vector2.one).width, ui_container.position.y), new Quaternion());
+                        old_pos = ui_container.position;
+                        page = 1;
+                    }
+                }
+                else if (page == 3)
+                {
+                    //Swipe Left
+                    if (old_pos.x - ui_container.position.x < transition_threshold)
+                    {
+
+                        ui_container.SetPositionAndRotation(new Vector2(old_pos.x + GetWorldRect(transition_distance_reference, Vector2.one).width, ui_container.position.y), new Quaternion());
+                        old_pos = ui_container.position;
+                        page = 2;
+                    }
+                }
 
                 else
                 { StartCoroutine(ReturnToPos()); }
