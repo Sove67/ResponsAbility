@@ -9,8 +9,6 @@ public class Input : MonoBehaviour
     private Vector2 finger_init;
     private Vector2 finger_last;
     private Vector2 finger_now;
-    private bool passed_threshold;
-    public float swipe_threshold;
 
     public Transition Transition;
     public Scrolling Scrolling;
@@ -32,13 +30,8 @@ public class Input : MonoBehaviour
                 finger_now = touch.position;
 
                 // Waits until the input has moved more than the threshold, and then continues until the touch event ends
-                if ((finger_now - finger_init).magnitude > swipe_threshold || passed_threshold)
-                { passed_threshold = true; CheckSwipe(touch); }
+                CheckSwipe(touch);
             }
-            
-            // Resets threshold on touch end
-            if (touch.phase == TouchPhase.Ended)
-            { passed_threshold = false; }
         }
     }
 

@@ -4,40 +4,61 @@ using UnityEngine;
 
 public class Scrolling : MonoBehaviour
 {
-    public int current_layer = 1;
-    public List<RectTransform> layer_1 = new List<RectTransform>();
-    public List<RectTransform> layer_2 = new List<RectTransform>();
-    
-    public void SetLayer(int choice)
-    {
-        current_layer = choice;
-    }
+    //Variables
+    public List<ScrollMask> sectors = new List<ScrollMask>();
+    public List<RectTransform> masks = new List<RectTransform>();
+    public List<RectTransform> roots = new List<RectTransform>();
 
-    // Handles scrolling using vertical swipes
-    public void Swipe(float dist, Touch touch)
+    // Classes
+    public class ScrollMask
     {
-        if (current_layer == 1)
+        public RectTransform mask { get; set; }
+        public RectTransform root { get; set; }
+        public float limitY { get; set; }
+        public ScrollMask(RectTransform mask, RectTransform root, float limitY)
         {
-            // Check each RectTransform in the "areas" list for touch events, and moves it based on "Input.cs" calculations
-            foreach (var rect in layer_1)
-            {
-                if (GetWorldRect(rect, Vector2.one).Contains(touch.position))
-                { rect.Translate(0, dist, 0); }
-            }
-        }
-        else if (current_layer == 2)
-        {
-            // Check each RectTransform in the "areas" list for touch events, and moves it based on "Input.cs" calculations
-            foreach (var rect in layer_2)
-            {
-                if (GetWorldRect(rect, Vector2.one).Contains(touch.position))
-                { rect.Translate(0, dist, 0); }
-            }
+            this.mask = mask;
+            this.root = root;
+            this.limitY = limitY;
         }
     }
 
-    // Code taken from Ash-Blue's accepted answer at https://answers.unity.com/questions/1100493/convert-recttransformrect-to-rect-world.html to solve rects being locally sized
-    static public Rect GetWorldRect(RectTransform rt, Vector2 scale)
+    // Functions
+    public void Start() // Assigns variables to main list
+    {
+        for (int i = 0; i < masks.Count; i++)
+        {
+            sectors.Add(new ScrollMask(masks[i], roots[i], 0));
+        }
+    }
+
+    public void Swipe(float dist, Touch touch) // Filters input to correct root
+    {
+        for (int i = 0; i < sectors.Count; i++)
+        {
+            if (GetWorldRect(sectors[i].mask, Vector2.one).Contains(touch.position))
+            {
+                if (sectors[i].root.anchoredPosition.y + dist <= 0)
+                {
+                    Debug.Log("A");
+                    sectors[i].root.anchoredPosition = new Vector2(0, 0);
+                }
+                else if (sectors[i].root.anchoredPosition.y + dist >= sectors[i].limitY)
+                {
+                    Debug.Log("B");
+                    sectors[i].root.anchoredPosition = new Vector2(0, sectors[i].limitY);
+                }
+                else
+                {
+                    Debug.Log("C");
+                    sectors[i].root.anchoredPosition = new Vector2(0, sectors[i].root.anchoredPosition.y + dist);
+                }
+                Debug.Log(sectors[i].root.anchoredPosition.y);
+            }
+        }
+    }
+
+    static public Rect GetWorldRect(RectTransform rt, Vector2 scale) // Code from Ash-Blue's accepted answer at https://answers.unity.com/questions/1100493/convert-recttransformrect-to-rect-world.html
     {
         // Convert the rectangle to world corners and grab the top left
         Vector3[] corners = new Vector3[4];
