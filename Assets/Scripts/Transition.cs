@@ -9,6 +9,7 @@ public class Transition : MonoBehaviour
     public int transitionThreshold;
     public float slideSpeed;
     private RectTransform panelContainer;
+    public bool screenLock;
 
     // Calculations
     public int page = 2;
@@ -21,28 +22,33 @@ public class Transition : MonoBehaviour
         oldPositionX = panelContainer.anchoredPosition.x;
         panelContainer.anchoredPosition = panelContainer.anchoredPosition;
     }
+    public void SetLock(bool choice) // Locks the screen from transitioning
+    { screenLock = choice; }
 
     public void Swipe(float dist, Touch touch) // Handles transitions using horizontal swipes
     {
-        panelContainer.anchoredPosition = new Vector2(panelContainer.anchoredPosition.x + dist, panelContainer.anchoredPosition.y);
-        if (touch.phase == TouchPhase.Ended)
+        if (!screenLock)
         {
-            // Swipe Right
-            if (oldPositionX - panelContainer.anchoredPosition.x > transitionThreshold && page + 1 < 4)
+            panelContainer.anchoredPosition = new Vector2(panelContainer.anchoredPosition.x + dist, panelContainer.anchoredPosition.y);
+            if (touch.phase == TouchPhase.Ended)
             {
-                StartCoroutine(MoveToXPosition(oldPositionX - panelContainer.rect.width));
-                page += 1;
-            }
+                // Swipe Right
+                if (oldPositionX - panelContainer.anchoredPosition.x > transitionThreshold && page + 1 < 4)
+                {
+                    StartCoroutine(MoveToXPosition(oldPositionX - panelContainer.rect.width));
+                    page += 1;
+                }
 
-            // Swipe Left
-            else if (oldPositionX - panelContainer.anchoredPosition.x < -transitionThreshold && page - 1 > 0)
-            {
-                StartCoroutine(MoveToXPosition(oldPositionX + panelContainer.rect.width));
-                page += -1;
-            }
+                // Swipe Left
+                else if (oldPositionX - panelContainer.anchoredPosition.x < -transitionThreshold && page - 1 > 0)
+                {
+                    StartCoroutine(MoveToXPosition(oldPositionX + panelContainer.rect.width));
+                    page += -1;
+                }
 
-            else
-            { StartCoroutine(MoveToXPosition(oldPositionX));  }
+                else
+                { StartCoroutine(MoveToXPosition(oldPositionX)); }
+            }
         }
     }
 

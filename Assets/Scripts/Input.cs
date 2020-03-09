@@ -10,8 +10,9 @@ public class Input : MonoBehaviour
     private Vector2 finger_last;
     private Vector2 finger_now;
 
+    public float touchMod;
     public Transition Transition;
-    public Scrolling Scrolling;
+    public List<Scrolling> Scrolling;
 
     // Seperates Touch inputs
     void Update()
@@ -50,8 +51,11 @@ public class Input : MonoBehaviour
         { vertical_dist = (finger_now.y - finger_last.y); }
 
         // Sends Values to their handlers
-        Transition.Swipe(horizontal_dist, touch);
-        Scrolling.Swipe(vertical_dist, touch);
+        Transition.Swipe(horizontal_dist*touchMod, touch);
+        foreach (var script in Scrolling)
+        {
+            script.Swipe(vertical_dist, touch);
+        }
 
         // Updates touch position
         finger_last = finger_now;

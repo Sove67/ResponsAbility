@@ -26,12 +26,12 @@ public class Note_Handler : MonoBehaviour
 
     // Outputs To Update
     public Text noteContent;
-    public Text noteEditorTitle;
-    public Text noteEditorContent;
-    public Scrolling scrolling;
+    public InputField noteEditorTitle;
+    public InputField noteEditorContent;
 
     // Other
     public List<Material> colourOptions;
+    public Scrolling titleScroller;
 
     // Classes
     public class Note
@@ -52,10 +52,9 @@ public class Note_Handler : MonoBehaviour
     }
 
     // Functions
-    public void Update()
+    public void Start()
     {
-        // Update Selection
-        // Update content
+        titleScroller.listLength = 0;
     }
 
     public void UpdateList()
@@ -83,27 +82,23 @@ public class Note_Handler : MonoBehaviour
             }
             count++;
         }
+
+        // Update Scroll Limit for Titles
         if (count > 5)
-        {
-            scrolling.sectors[1].limitY = (count-5) * noteTitlePrefab.GetComponent<RectTransform>().rect.height;
-        }
+        { titleScroller.listLength = (count-5) * noteTitlePrefab.GetComponent<RectTransform>().rect.height; }
         else
-        {
-            scrolling.sectors[1].limitY = 0;
-        }
+        { titleScroller.listLength = 0; }
     }
     public void UpdateSelection(int index)
     {
         if (index == -1)
         {
             noteContent.text = "";
-            noteEditorContainer.SetActive(true);
             noteEditorTitle.text = "";
             noteEditorContent.text = "";
             noteEditorColourIndex = 0;
             noteEditorColourIndicator.GetComponent<Image>().color = colourOptions[0].color;
             noteEditorDate = System.DateTime.Now;
-            noteEditorContainer.SetActive(false);
             selectedNote = index;
             editNote.interactable = false;
             deleteNote.interactable = false;
@@ -111,13 +106,11 @@ public class Note_Handler : MonoBehaviour
         else
         {
             noteContent.text = noteInfoList[index].content;
-            noteEditorContainer.SetActive(true);
             noteEditorTitle.text = noteInfoList[index].title;
             noteEditorContent.text = noteInfoList[index].content;
             noteEditorColourIndex = noteInfoList[index].colour;
             noteEditorColourIndicator.GetComponent<Image>().color = colourOptions[noteInfoList[index].colour].color;
             noteEditorDate = noteInfoList[index].date;
-            noteEditorContainer.SetActive(false);
             selectedNote = index;
             editNote.interactable = true;
             deleteNote.interactable = true;
@@ -139,7 +132,15 @@ public class Note_Handler : MonoBehaviour
 
     public void Save()
     {
-        noteInfoList[selectedNote] = new Note(noteEditorTitle.text, System.DateTime.Now, noteEditorColourIndex, noteEditorContent.text, noteInfoList[selectedNote].instatiated);
+        if (noteEditorTitle.text == "")
+        {
+            noteInfoList[selectedNote] = new Note("Untitled", System.DateTime.Now, noteEditorColourIndex, noteEditorContent.text, noteInfoList[selectedNote].instatiated);
+        }
+        else
+        {
+            noteInfoList[selectedNote] = new Note(noteEditorTitle.text, System.DateTime.Now, noteEditorColourIndex, noteEditorContent.text, noteInfoList[selectedNote].instatiated);
+        }
+        UpdateSelection(selectedNote);
         UpdateList();
     }
 

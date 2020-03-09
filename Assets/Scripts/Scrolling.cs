@@ -4,56 +4,48 @@ using UnityEngine;
 
 public class Scrolling : MonoBehaviour
 {
-    //Variables
-    public List<ScrollMask> sectors = new List<ScrollMask>();
-    public List<RectTransform> masks = new List<RectTransform>();
-    public List<RectTransform> roots = new List<RectTransform>();
+    // Variables
+    public RectTransform mask;
+    public RectTransform root;
+    public RectTransform content = null;
+    public float? listLength = null;
+    public Vector2 YLimit;
+    public float YBuffer;
 
-    // Classes
-    public class ScrollMask
+    public void Update()
     {
-        public RectTransform mask { get; set; }
-        public RectTransform root { get; set; }
-        public float limitY { get; set; }
-        public ScrollMask(RectTransform mask, RectTransform root, float limitY)
+        if (listLength != null)
         {
-            this.mask = mask;
-            this.root = root;
-            this.limitY = limitY;
+            YLimit.x = 0;
+            YLimit.y = listLength ?? default(float); // Taken from https://stackoverflow.com/questions/5995317/how-to-convert-c-sharp-nullable-int-to-int/5995418
         }
-    }
 
-    // Functions
-    public void Start() // Assigns variables to main list
-    {
-        for (int i = 0; i < masks.Count; i++)
+        else if (content != null)
         {
-            sectors.Add(new ScrollMask(masks[i], roots[i], 0));
+            YLimit.x = -content.rect.height /2;
+            YLimit.y = content.anchoredPosition.y;
+        }
+        else
+        {
+            YLimit = Vector2.zero;
         }
     }
 
     public void Swipe(float dist, Touch touch) // Filters input to correct root
     {
-        for (int i = 0; i < sectors.Count; i++)
+        if (GetWorldRect(mask, Vector2.one).Contains(touch.position))
         {
-            if (GetWorldRect(sectors[i].mask, Vector2.one).Contains(touch.position))
+            if (root.anchoredPosition.y + dist <= YLimit.x)
             {
-                if (sectors[i].root.anchoredPosition.y + dist <= 0)
-                {
-                    Debug.Log("A");
-                    sectors[i].root.anchoredPosition = new Vector2(0, 0);
-                }
-                else if (sectors[i].root.anchoredPosition.y + dist >= sectors[i].limitY)
-                {
-                    Debug.Log("B");
-                    sectors[i].root.anchoredPosition = new Vector2(0, sectors[i].limitY);
-                }
-                else
-                {
-                    Debug.Log("C");
-                    sectors[i].root.anchoredPosition = new Vector2(0, sectors[i].root.anchoredPosition.y + dist);
-                }
-                Debug.Log(sectors[i].root.anchoredPosition.y);
+                root.anchoredPosition = new Vector2(0, YLimit.x);
+            }
+            else if (root.anchoredPosition.y + dist >= YLimit.y + YBuffer)
+            {
+                root.anchoredPosition = new Vector2(0, YLimit.y + YBuffer);
+            }
+            else
+            {
+                root.anchoredPosition = new Vector2(0, root.anchoredPosition.y + dist);
             }
         }
     }
