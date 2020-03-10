@@ -2,23 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class Note_Handler : MonoBehaviour
 {
     // Variables
     // Note Data
-    private List<Note> noteInfoList = new List<Note>();
-    private List<GameObject> noteUIList = new List<GameObject>();
+    [SerializeField]
+    public List<Note> noteInfoList = new List<Note>();
+    [SerializeField]
+    public List<GameObject> noteUIList = new List<GameObject>();
     private int selectedNote;
 
     // Enviroment Data
     private int noteEditorColourIndex;
-    private System.DateTime noteEditorDate;
     public GameObject noteEditorColourIndicator;
     public GameObject noteListContainer;
     public GameObject noteEditorContainer;
     public GameObject noteTitlePrefab;
-
 
     // Buttons
     public Button editNote;
@@ -34,6 +35,8 @@ public class Note_Handler : MonoBehaviour
     public Scrolling titleScroller;
 
     // Classes
+
+    [Serializable]
     public class Note
     {
         public string title { get; set; }
@@ -98,7 +101,6 @@ public class Note_Handler : MonoBehaviour
             noteEditorContent.text = "";
             noteEditorColourIndex = 0;
             noteEditorColourIndicator.GetComponent<Image>().color = colourOptions[0].color;
-            noteEditorDate = System.DateTime.Now;
             selectedNote = index;
             editNote.interactable = false;
             deleteNote.interactable = false;
@@ -110,7 +112,6 @@ public class Note_Handler : MonoBehaviour
             noteEditorContent.text = noteInfoList[index].content;
             noteEditorColourIndex = noteInfoList[index].colour;
             noteEditorColourIndicator.GetComponent<Image>().color = colourOptions[noteInfoList[index].colour].color;
-            noteEditorDate = noteInfoList[index].date;
             selectedNote = index;
             editNote.interactable = true;
             deleteNote.interactable = true;
