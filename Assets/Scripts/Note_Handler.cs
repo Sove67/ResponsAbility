@@ -8,9 +8,7 @@ public class Note_Handler : MonoBehaviour
 {
     // Variables
     // Note Data
-    [SerializeField]
-    public List<Note> noteInfoList = new List<Note>();
-    [SerializeField]
+    [SerializeField] public List<Note> noteInfoList = new List<Note>();
     public List<GameObject> noteUIList = new List<GameObject>();
     private int selectedNote;
 
@@ -18,8 +16,7 @@ public class Note_Handler : MonoBehaviour
     private int noteEditorColourIndex;
     public GameObject noteEditorColourIndicator;
     public GameObject noteListContainer;
-    public GameObject noteEditorContainer;
-    public GameObject noteTitlePrefab;
+    public GameObject titlePrefab;
 
     // Buttons
     public Button editNote;
@@ -35,9 +32,7 @@ public class Note_Handler : MonoBehaviour
     public Scrolling titleScroller;
 
     // Classes
-
-    [Serializable]
-    public class Note
+    [Serializable] public class Note
     {
         public string title { get; set; }
         public System.DateTime date { get; set; }
@@ -68,7 +63,7 @@ public class Note_Handler : MonoBehaviour
         {
             if (!note.instatiated) // Create Title Card.
             {
-                GameObject newNoteUI = Instantiate(noteTitlePrefab, noteListContainer.transform);
+                GameObject newNoteUI = Instantiate(titlePrefab, noteListContainer.transform);
                 noteUIList.Add(newNoteUI);
                 noteInfoList[count].instatiated = true;
             }
@@ -76,7 +71,7 @@ public class Note_Handler : MonoBehaviour
             {
                 Vector2 position = noteUIList[count].GetComponent<RectTransform>().anchoredPosition;
                 int index = count;
-                float spacing = noteTitlePrefab.GetComponent<RectTransform>().rect.height;
+                float spacing = titlePrefab.GetComponent<RectTransform>().rect.height;
                 noteUIList[count].GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -spacing/2 + (count * -spacing));
                 noteUIList[count].GetComponent<Button>().onClick.RemoveAllListeners();
                 noteUIList[count].GetComponent<Button>().onClick.AddListener(() => UpdateSelection(index)); // Code from https://answers.unity.com/questions/938496/buttononclickaddlistener.html & https://answers.unity.com/questions/1384803/problem-with-onclickaddlistener.html
@@ -88,7 +83,7 @@ public class Note_Handler : MonoBehaviour
 
         // Update Scroll Limit for Titles
         if (count > 5)
-        { titleScroller.listLength = (count-5) * noteTitlePrefab.GetComponent<RectTransform>().rect.height; }
+        { titleScroller.listLength = (count-5) * titlePrefab.GetComponent<RectTransform>().rect.height; }
         else
         { titleScroller.listLength = 0; }
     }

@@ -27,8 +27,8 @@ public class Header : MonoBehaviour
         {
             "You can improve the quality of your study notes if you imagine you're making them for someone else.",
             "20 minutes of exercise before an exam will improve your performance!",
-            "Chewing gum is actually a brain booster, one study found a 40 per cent increase in memory test scores.",
-            "Studying at a green surrounding or glancing at colour green can make you more creative.",
+            "Chewing gum is actually a brain booster! One study found a 40 per cent increase in memory test scores.",
+            "Studying in a green surrounding or glancing at the colour green can make you more creative.",
             "Drawing diagrams help you memorize them.",
             "You’re more likely to retain information from your class if you review what you’ve learned every day.",
             "Changing your environment helps you retain what you're studying.",
