@@ -33,20 +33,23 @@ public class Scrolling : MonoBehaviour
 
     public void Swipe(float dist, Touch touch) // Filters input to correct root
     {
+        float posMod = root.anchoredPosition.y + dist;
         if (GetWorldRect(mask, Vector2.one).Contains(touch.position))
         {
-            if (root.anchoredPosition.y + dist <= YLimit.x)
-            {
-                root.anchoredPosition = new Vector2(0, YLimit.x);
+            if (posMod <= YLimit.x) // Lowest Limit
+            { root.anchoredPosition = new Vector2(0, YLimit.x); }
+
+            else if (posMod >= YLimit.y + YBuffer) // Highest Limit
+            { 
+                if (YLimit.x <= YLimit.y + YBuffer)
+                { root.anchoredPosition = new Vector2(0, YLimit.y + YBuffer); }
+                else
+                { root.anchoredPosition = new Vector2(0, YLimit.x); }
             }
-            else if (root.anchoredPosition.y + dist >= YLimit.y + YBuffer)
-            {
-                root.anchoredPosition = new Vector2(0, YLimit.y + YBuffer);
-            }
-            else
-            {
-                root.anchoredPosition = new Vector2(0, root.anchoredPosition.y + dist);
-            }
+
+            else // Posible Movement
+            { root.anchoredPosition = new Vector2(0, posMod); }
+            Debug.Log(root.anchoredPosition.y);
         }
     }
 

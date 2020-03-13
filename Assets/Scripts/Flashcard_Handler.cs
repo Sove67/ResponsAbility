@@ -43,6 +43,8 @@ public class Flashcard_Handler : MonoBehaviour
     public List<Material> colourOptions;
     public Scrolling deckTitleScroller;
     public Scrolling cardTitleScroller;
+    public float debug1;
+    public float debug2;
 
     // Classes
     [Serializable] public class Card
@@ -115,14 +117,21 @@ public class Flashcard_Handler : MonoBehaviour
 
         // Update Scroll Limit for Titles
         if (count > 5)
-        { deckTitleScroller.listLength = (count - 5) * deckTitlePrefab.GetComponent<RectTransform>().rect.height; }
+        { 
+            deckTitleScroller.listLength = (count - 5) * deckTitlePrefab.GetComponent<RectTransform>().rect.height;
+            debug1 = (count - 5) * deckTitlePrefab.GetComponent<RectTransform>().rect.height;
+        }
         else
-        { deckTitleScroller.listLength = 0; }
+        { 
+            deckTitleScroller.listLength = 0;
+            deckTitleScroller.listLength = debug1;
+        }
     }
 
     public void SelectDeck(int index)
     {
-        Debug.Log("Selected Deck " + index);
+        DeleteCardUI(); // Clear Old First
+
         selectedDeck = index;
         SelectCard(-1);
         if (index == -1)
@@ -188,13 +197,14 @@ public class Flashcard_Handler : MonoBehaviour
     }
 
     // Card
-    private void UpdateCardList()
+    public void UpdateCardList()
     {
         int count = 0;
         foreach (var card in currentCards) // Update All Cards
         {
             if (!card.instatiated) // Create Title Card.
             {
+                Debug.Log("A");
                 cardUIList.Add(Instantiate(cardTitlePrefab, cardListContainer.transform));
                 currentCards[count].instatiated = true;
             }
@@ -210,19 +220,26 @@ public class Flashcard_Handler : MonoBehaviour
             }
             count++;
         }
-
+        /*
         Debug.Log(currentCards.Count + ", " + cardUIList.Count);
         for (int i = currentCards.Count; i < cardUIList.Count; i++) // If list overflows, purge the rest.
         {
             Destroy(cardUIList[i]);
             cardUIList.RemoveAt(i);
         }
+        */
 
         // Update Scroll Limit for Titles
         if (count > 5)
-        { cardTitleScroller.listLength = (currentCards.Count - 5) * cardTitlePrefab.GetComponent<RectTransform>().rect.height; }
+        { 
+            cardTitleScroller.listLength = (count - 5) * cardTitlePrefab.GetComponent<RectTransform>().rect.height;
+            debug2 = (count - 5) * cardTitlePrefab.GetComponent<RectTransform>().rect.height;
+        }
         else
-        { cardTitleScroller.listLength = 0; }
+        { 
+            cardTitleScroller.listLength = 0;
+            debug2 = 0;
+        }
     }
 
     public void SelectCard(int index)
@@ -281,5 +298,15 @@ public class Flashcard_Handler : MonoBehaviour
         cardUIList.RemoveAt(selectedCard);
         SelectCard(-1);
         UpdateCardList();
+    }
+
+    public void DeleteCardUI()
+    {
+        foreach (GameObject gameObject in cardUIList)
+        { Destroy(gameObject); }
+        int limit = currentCards.Count;
+        for (int i = 0; i < limit; i++)
+        { currentCards[i].instatiated = false; }
+        cardUIList.Clear();
     }
 }

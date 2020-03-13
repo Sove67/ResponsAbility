@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Content_Sizer : MonoBehaviour
 {
-    float height;
+    public float height;
     // Update is called once per frame
     void Update()
     {
