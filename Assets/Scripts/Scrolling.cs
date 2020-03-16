@@ -7,27 +7,38 @@ public class Scrolling : MonoBehaviour
     // Variables
     public RectTransform mask;
     public RectTransform root;
-    public RectTransform content = null;
-    public float? listLength = null;
+    public RectTransform content;
+    public float? oldContentHeight;
+    public float? listLength;
+    public float oldListLength;
     public Vector2 YLimit;
     public float YBuffer;
 
     public void Update()
     {
-        if (listLength != null)
+        if ((listLength != null && listLength != oldListLength) || (content != null && GetWorldRect(content, Vector2.one).height != oldContentHeight) || YLimit == null)
         {
-            YLimit.x = 0;
-            YLimit.y = listLength ?? default(float); // Taken from https://stackoverflow.com/questions/5995317/how-to-convert-c-sharp-nullable-int-to-int/5995418
-        }
+            if (listLength != null)
+            {
+                YLimit.x = 0;
+                YLimit.y = listLength ?? default(float); // Taken from https://stackoverflow.com/questions/5995317/how-to-convert-c-sharp-nullable-int-to-int/5995418
+                oldListLength = listLength ?? default(float);
+            }
 
-        else if (content != null)
-        {
-            YLimit.x = -content.rect.height /2;
-            YLimit.y = content.anchoredPosition.y;
-        }
-        else
-        {
-            YLimit = Vector2.zero;
+            else if (content != null)
+            {
+                YLimit.x = -GetWorldRect(content, Vector2.one).height / 2;
+                YLimit.y = (GetWorldRect(content, Vector2.one).height / 2) - (GetWorldRect(mask, Vector2.one).height) + YBuffer;
+                oldContentHeight = GetWorldRect(content, Vector2.one).height;
+            }
+
+            else
+            {
+                Debug.LogError("No Limiting Object Was Attached To The Scrolling Script On " + this.name + ".");
+                YLimit = Vector2.zero;
+            }
+
+            Reset();
         }
     }
 
@@ -39,18 +50,22 @@ public class Scrolling : MonoBehaviour
             if (posMod <= YLimit.x) // Lowest Limit
             { root.anchoredPosition = new Vector2(0, YLimit.x); }
 
-            else if (posMod >= YLimit.y + YBuffer) // Highest Limit
+            else if (posMod >= YLimit.y) // Highest Limit
             { 
-                if (YLimit.x <= YLimit.y + YBuffer)
-                { root.anchoredPosition = new Vector2(0, YLimit.y + YBuffer); }
+                if (YLimit.x <= YLimit.y)
+                { root.anchoredPosition = new Vector2(0, YLimit.y); }
                 else
                 { root.anchoredPosition = new Vector2(0, YLimit.x); }
             }
 
             else // Posible Movement
             { root.anchoredPosition = new Vector2(0, posMod); }
-            Debug.Log(root.anchoredPosition.y);
         }
+    }
+
+    public void Reset()
+    {
+        root.anchoredPosition = new Vector2(0, YLimit.x);
     }
 
     static public Rect GetWorldRect(RectTransform rt, Vector2 scale) // Code from Ash-Blue's accepted answer at https://answers.unity.com/questions/1100493/convert-recttransformrect-to-rect-world.html

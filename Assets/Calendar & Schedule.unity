@@ -523,8 +523,9 @@ MonoBehaviour:
   mask: {fileID: 225603021}
   root: {fileID: 904196139}
   content: {fileID: 501970712}
+  oldListLength: 1
   YLimit: {x: 0, y: 0}
-  YBuffer: -25
+  YBuffer: 50
 --- !u!1 &35144404
 GameObject:
   m_ObjectHideFlags: 0
@@ -1148,6 +1149,7 @@ MonoBehaviour:
   mask: {fileID: 1968480196}
   root: {fileID: 1092963852}
   content: {fileID: 1092963852}
+  oldListLength: 1
   YLimit: {x: 0, y: 0}
   YBuffer: 100
 --- !u!114 &107504891
@@ -1384,7 +1386,7 @@ MonoBehaviour:
   m_LineType: 0
   m_HideMobileInput: 0
   m_CharacterValidation: 0
-  m_CharacterLimit: 20
+  m_CharacterLimit: 30
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
@@ -1979,6 +1981,7 @@ MonoBehaviour:
   mask: {fileID: 1208950255}
   root: {fileID: 1610034514}
   content: {fileID: 0}
+  oldListLength: 1
   YLimit: {x: 0, y: 0}
   YBuffer: 100
 --- !u!1 &225603020
@@ -3925,6 +3928,7 @@ MonoBehaviour:
   mask: {fileID: 1108500021}
   root: {fileID: 1662240724}
   content: {fileID: 0}
+  oldListLength: 1
   YLimit: {x: 0, y: 0}
   YBuffer: 100
 --- !u!1 &512766120
@@ -3980,7 +3984,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1069e8b03be47e34c86074dc16095808, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  noteInfoList: []
+  notes: []
   noteUIList: []
   noteEditorColourIndicator: {fileID: 1183084601}
   noteListContainer: {fileID: 1610034513}
@@ -4001,6 +4005,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 6299c79b74b9c4140b1f01e83b42d817, type: 2}
   - {fileID: 2100000, guid: 37f152e5d5a206f44b2731ec33ea6c17, type: 2}
   titleScroller: {fileID: 212184812}
+  listScroller: {fileID: 1380675785}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -7663,7 +7668,7 @@ MonoBehaviour:
   m_LineType: 0
   m_HideMobileInput: 0
   m_CharacterValidation: 0
-  m_CharacterLimit: 20
+  m_CharacterLimit: 30
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
@@ -7989,7 +7994,7 @@ MonoBehaviour:
   m_LineType: 0
   m_HideMobileInput: 0
   m_CharacterValidation: 0
-  m_CharacterLimit: 20
+  m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
@@ -9898,7 +9903,7 @@ GameObject:
   - component: {fileID: 1380675784}
   - component: {fileID: 1380675785}
   m_Layer: 5
-  m_Name: Content Container
+  m_Name: Note Content Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9989,6 +9994,7 @@ MonoBehaviour:
   mask: {fileID: 2134474565}
   root: {fileID: 1761748170}
   content: {fileID: 817064452}
+  oldListLength: 1
   YLimit: {x: 0, y: 0}
   YBuffer: 50
 --- !u!1 &1409051881
@@ -11255,6 +11261,7 @@ MonoBehaviour:
   mask: {fileID: 1230593458}
   root: {fileID: 1465140860}
   content: {fileID: 1465140860}
+  oldListLength: 1
   YLimit: {x: 0, y: 0}
   YBuffer: 100
 --- !u!1 &1569980131
@@ -12194,7 +12201,7 @@ MonoBehaviour:
   m_LineType: 0
   m_HideMobileInput: 0
   m_CharacterValidation: 0
-  m_CharacterLimit: 20
+  m_CharacterLimit: 30
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
@@ -12945,6 +12952,28 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 387305978}
+        m_MethodName: SaveCard
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 441496563}
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 387305978}
         m_MethodName: SaveDeck
         m_Mode: 1
         m_Arguments:
@@ -13389,6 +13418,7 @@ MonoBehaviour:
   mask: {fileID: 648586138}
   root: {fileID: 746511585}
   content: {fileID: 0}
+  oldListLength: 1
   YLimit: {x: 0, y: 0}
   YBuffer: 100
 --- !u!224 &1890889339
@@ -14382,7 +14412,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7aec3acfc7f0d4e49b7a51ff9a91b60c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  note_Handler: {fileID: 512766122}
+  note_handler: {fileID: 512766122}
+  flashcard_handler: {fileID: 387305978}
 --- !u!1 &2040934624
 GameObject:
   m_ObjectHideFlags: 0
@@ -14508,7 +14539,7 @@ MonoBehaviour:
   m_LineType: 0
   m_HideMobileInput: 0
   m_CharacterValidation: 0
-  m_CharacterLimit: 20
+  m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []

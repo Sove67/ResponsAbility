@@ -10,7 +10,7 @@ public class Flashcard_Handler : MonoBehaviour
     // Variables
     // Deck & Card Data
     [SerializeField] public List<Deck> decks = new List<Deck>();
-    [SerializeField] public List<Card> currentCards = new List<Card>();
+    public List<Card> currentCards = new List<Card>();
     public List<GameObject> deckUIList = new List<GameObject>();
     public List<GameObject> cardUIList = new List<GameObject>();
     private int selectedDeck = -1;
@@ -204,7 +204,6 @@ public class Flashcard_Handler : MonoBehaviour
         {
             if (!card.instatiated) // Create Title Card.
             {
-                Debug.Log("A");
                 cardUIList.Add(Instantiate(cardTitlePrefab, cardListContainer.transform));
                 currentCards[count].instatiated = true;
             }
@@ -279,16 +278,19 @@ public class Flashcard_Handler : MonoBehaviour
 
     public void SaveCard()
     {
-        if (cardEditorTitle.text == "")
+        if (selectedCard != -1)
         {
-            currentCards[selectedCard] = new Card("Untitled", cardEditorQuestion.text, cardEditorAnswer.text, currentCards[selectedCard].instatiated);
+            if (cardEditorTitle.text == "")
+            {
+                currentCards[selectedCard] = new Card("Untitled", cardEditorQuestion.text, cardEditorAnswer.text, currentCards[selectedCard].instatiated);
+            }
+            else
+            {
+                currentCards[selectedCard] = new Card(cardEditorTitle.text, cardEditorQuestion.text, cardEditorAnswer.text, currentCards[selectedCard].instatiated);
+            }
+            SelectCard(-1);
+            UpdateCardList();
         }
-        else
-        {
-            currentCards[selectedCard] = new Card(cardEditorTitle.text, cardEditorQuestion.text, cardEditorAnswer.text, currentCards[selectedCard].instatiated);
-        }
-        SelectCard(-1);
-        UpdateCardList();
     }
 
     public void DeleteCard()

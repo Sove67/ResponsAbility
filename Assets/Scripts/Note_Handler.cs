@@ -8,7 +8,7 @@ public class Note_Handler : MonoBehaviour
 {
     // Variables
     // Note Data
-    [SerializeField] public List<Note> noteInfoList = new List<Note>();
+    [SerializeField] public List<Note> notes = new List<Note>();
     public List<GameObject> noteUIList = new List<GameObject>();
     private int selectedNote;
 
@@ -30,6 +30,7 @@ public class Note_Handler : MonoBehaviour
     // Other
     public List<Material> colourOptions;
     public Scrolling titleScroller;
+    public Scrolling listScroller;
 
     // Classes
     [Serializable] public class Note
@@ -53,19 +54,21 @@ public class Note_Handler : MonoBehaviour
     public void Start()
     {
         titleScroller.listLength = 0;
+        UpdateSelection(notes.Count - 1);
+        UpdateList();
     }
 
     public void UpdateList()
     {
         int count = 0;
 
-        foreach (var note in noteInfoList) // Update All Cards
+        foreach (var note in notes) // Update All Cards
         {
             if (!note.instatiated) // Create Title Card.
             {
                 GameObject newNoteUI = Instantiate(titlePrefab, noteListContainer.transform);
                 noteUIList.Add(newNoteUI);
-                noteInfoList[count].instatiated = true;
+                notes[count].instatiated = true;
             }
             if (note.instatiated)// Set Card Properties
             {
@@ -75,8 +78,8 @@ public class Note_Handler : MonoBehaviour
                 noteUIList[count].GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -spacing/2 + (count * -spacing));
                 noteUIList[count].GetComponent<Button>().onClick.RemoveAllListeners();
                 noteUIList[count].GetComponent<Button>().onClick.AddListener(() => UpdateSelection(index)); // Code from https://answers.unity.com/questions/938496/buttononclickaddlistener.html & https://answers.unity.com/questions/1384803/problem-with-onclickaddlistener.html
-                noteUIList[count].transform.Find("Title").GetComponent<Text>().text = noteInfoList[count].title;
-                noteUIList[count].transform.Find("Colour Indicator").GetComponent<Image>().color = colourOptions[noteInfoList[count].colour].color;
+                noteUIList[count].transform.Find("Title").GetComponent<Text>().text = notes[count].title;
+                noteUIList[count].transform.Find("Colour Indicator").GetComponent<Image>().color = colourOptions[notes[count].colour].color;
             }
             count++;
         }
@@ -87,6 +90,7 @@ public class Note_Handler : MonoBehaviour
         else
         { titleScroller.listLength = 0; }
     }
+
     public void UpdateSelection(int index)
     {
         if (index == -1)
@@ -100,17 +104,20 @@ public class Note_Handler : MonoBehaviour
             editNote.interactable = false;
             deleteNote.interactable = false;
         }
+
         else
         {
-            noteContent.text = noteInfoList[index].content;
-            noteEditorTitle.text = noteInfoList[index].title;
-            noteEditorContent.text = noteInfoList[index].content;
-            noteEditorColourIndex = noteInfoList[index].colour;
-            noteEditorColourIndicator.GetComponent<Image>().color = colourOptions[noteInfoList[index].colour].color;
+            noteContent.text = notes[index].content;
+            noteEditorTitle.text = notes[index].title;
+            noteEditorContent.text = notes[index].content;
+            noteEditorColourIndex = notes[index].colour;
+            noteEditorColourIndicator.GetComponent<Image>().color = colourOptions[notes[index].colour].color;
             selectedNote = index;
             editNote.interactable = true;
             deleteNote.interactable = true;
         }
+
+        listScroller.Reset();
     }
 
     public void SetColour(int mod)
@@ -121,8 +128,8 @@ public class Note_Handler : MonoBehaviour
 
     public void Create()
     {
-        noteInfoList.Add(new Note("Untitled", System.DateTime.Now, 0, "", false));
-        UpdateSelection(noteInfoList.Count-1);
+        notes.Add(new Note("Untitled", System.DateTime.Now, 0, "", false));
+        UpdateSelection(notes.Count-1);
         UpdateList();
     }
 
@@ -130,11 +137,11 @@ public class Note_Handler : MonoBehaviour
     {
         if (noteEditorTitle.text == "")
         {
-            noteInfoList[selectedNote] = new Note("Untitled", System.DateTime.Now, noteEditorColourIndex, noteEditorContent.text, noteInfoList[selectedNote].instatiated);
+            notes[selectedNote] = new Note("Untitled", System.DateTime.Now, noteEditorColourIndex, noteEditorContent.text, notes[selectedNote].instatiated);
         }
         else
         {
-            noteInfoList[selectedNote] = new Note(noteEditorTitle.text, System.DateTime.Now, noteEditorColourIndex, noteEditorContent.text, noteInfoList[selectedNote].instatiated);
+            notes[selectedNote] = new Note(noteEditorTitle.text, System.DateTime.Now, noteEditorColourIndex, noteEditorContent.text, notes[selectedNote].instatiated);
         }
         UpdateSelection(selectedNote);
         UpdateList();
@@ -142,7 +149,7 @@ public class Note_Handler : MonoBehaviour
 
     public void Delete()
     {
-        noteInfoList.RemoveAt(selectedNote);
+        notes.RemoveAt(selectedNote);
         Destroy(noteUIList[selectedNote]);
         noteUIList.RemoveAt(selectedNote);
         UpdateSelection(-1);

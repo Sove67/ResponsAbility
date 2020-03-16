@@ -6,12 +6,13 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
 
-public class Save_Load : MonoBehaviour
+public class Save_Load : MonoBehaviour // Most of this script is adapted from https://www.youtube.com/watch?v=zAhjm_-Y-SA
 {
     private readonly string dataPath = "/Save.dat";
-    private Save_File currentInstance;
+    private Save_File loadedFile;
 
-    public Note_Handler note_Handler;
+    public Note_Handler note_handler;
+    public Flashcard_Handler flashcard_handler;
 
     private void Awake()
     {
@@ -22,10 +23,10 @@ public class Save_Load : MonoBehaviour
     void OnApplicationQuit()
     {
         Debug.Log("Quit");
-        Save(note_Handler.noteInfoList, note_Handler.noteUIList);
+        Save(note_handler.notes, flashcard_handler.decks);
     }
 
-    void Save(List<Note_Handler.Note> noteInfoList, List<GameObject> noteUIList)
+    void Save(List<Note_Handler.Note> notes, List<Flashcard_Handler.Deck> decks)
     {
         FileStream file = null;
 
@@ -33,13 +34,16 @@ public class Save_Load : MonoBehaviour
         {
             BinaryFormatter bf = new BinaryFormatter();
 
-            if (noteInfoList != null && noteUIList != null)
+            if (notes != null && decks != null)
             {
-                foreach (var noteInfo in noteInfoList)
-                { noteInfo.instatiated = false; }
+                foreach (var note in notes)
+                { note.instatiated = false; }
+
+                foreach (var deck in decks)
+                { deck.instatiated = false; }
 
                 file = File.Create(Application.persistentDataPath + dataPath);
-                Save_File dataSet = new Save_File(noteInfoList);
+                Save_File dataSet = new Save_File(notes, decks);
                 bf.Serialize(file, dataSet);
             }
             else
@@ -69,12 +73,15 @@ public class Save_Load : MonoBehaviour
         {
             BinaryFormatter bf = new BinaryFormatter();
             file = File.Open(Application.persistentDataPath + dataPath, FileMode.Open);
-            currentInstance = bf.Deserialize(file) as Save_File;
+            loadedFile = bf.Deserialize(file) as Save_File;
 
-            if (currentInstance.noteInfoList != null)
+            if (loadedFile.notes != null && loadedFile.decks != null)
             {
-                note_Handler.noteInfoList = currentInstance.noteInfoList;
-                note_Handler.UpdateList();
+                note_handler.notes = loadedFile.notes;
+                note_handler.UpdateList();
+
+                flashcard_handler.decks = loadedFile.decks;
+                flashcard_handler.UpdateDeckList();
             }
             else
             { throw new ArgumentException("Load data is empty."); }
