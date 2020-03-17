@@ -10,11 +10,11 @@ public class Flashcard_Handler : MonoBehaviour
     // Variables
     // Deck & Card Data
     [SerializeField] public List<Deck> decks = new List<Deck>();
-    public List<Card> currentCards = new List<Card>();
-    public List<GameObject> deckUIList = new List<GameObject>();
-    public List<GameObject> cardUIList = new List<GameObject>();
+    private List<Card> currentCards = new List<Card>();
+    private List<GameObject> deckUIList = new List<GameObject>();
+    private List<GameObject> cardUIList = new List<GameObject>();
     private int selectedDeck = -1;
-    public int selectedCard = -1;
+    private int selectedCard = -1;
 
     // Enviroment Data
     private int deckEditorColourIndex;
@@ -43,8 +43,6 @@ public class Flashcard_Handler : MonoBehaviour
     public List<Material> colourOptions;
     public Scrolling deckTitleScroller;
     public Scrolling cardTitleScroller;
-    public float debug1;
-    public float debug2;
 
     // Classes
     [Serializable] public class Card
@@ -117,15 +115,9 @@ public class Flashcard_Handler : MonoBehaviour
 
         // Update Scroll Limit for Titles
         if (count > 5)
-        { 
-            deckTitleScroller.listLength = (count - 5) * deckTitlePrefab.GetComponent<RectTransform>().rect.height;
-            debug1 = (count - 5) * deckTitlePrefab.GetComponent<RectTransform>().rect.height;
-        }
+        { deckTitleScroller.listLength = (count - 5) * deckTitlePrefab.GetComponent<RectTransform>().rect.height; }
         else
-        { 
-            deckTitleScroller.listLength = 0;
-            deckTitleScroller.listLength = debug1;
-        }
+        { deckTitleScroller.listLength = 0; }
     }
 
     public void SelectDeck(int index)
@@ -219,26 +211,12 @@ public class Flashcard_Handler : MonoBehaviour
             }
             count++;
         }
-        /*
-        Debug.Log(currentCards.Count + ", " + cardUIList.Count);
-        for (int i = currentCards.Count; i < cardUIList.Count; i++) // If list overflows, purge the rest.
-        {
-            Destroy(cardUIList[i]);
-            cardUIList.RemoveAt(i);
-        }
-        */
 
         // Update Scroll Limit for Titles
         if (count > 5)
-        { 
-            cardTitleScroller.listLength = (count - 5) * cardTitlePrefab.GetComponent<RectTransform>().rect.height;
-            debug2 = (count - 5) * cardTitlePrefab.GetComponent<RectTransform>().rect.height;
-        }
+        { cardTitleScroller.listLength = (count - 5) * cardTitlePrefab.GetComponent<RectTransform>().rect.height; }
         else
-        { 
-            cardTitleScroller.listLength = 0;
-            debug2 = 0;
-        }
+        { cardTitleScroller.listLength = 0; }
     }
 
     public void SelectCard(int index)

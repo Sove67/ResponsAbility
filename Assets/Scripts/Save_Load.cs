@@ -40,7 +40,11 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
                 { note.instatiated = false; }
 
                 foreach (var deck in decks)
-                { deck.instatiated = false; }
+                { 
+                    deck.instatiated = false;
+                    foreach (var card in deck.content)
+                    { card.instatiated = false; }
+                }
 
                 file = File.Create(Application.persistentDataPath + dataPath);
                 Save_File dataSet = new Save_File(notes, decks);

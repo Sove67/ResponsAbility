@@ -45,8 +45,9 @@ public class Scrolling : MonoBehaviour
     public void Swipe(float dist, Touch touch) // Filters input to correct root
     {
         float posMod = root.anchoredPosition.y + dist;
-        if (GetWorldRect(mask, Vector2.one).Contains(touch.position))
+        if (mask.gameObject.activeSelf && GetWorldRect(mask, Vector2.one).Contains(touch.position))
         {
+            Debug.Log("Swipe Found In: " + this.name);
             if (posMod <= YLimit.x) // Lowest Limit
             { root.anchoredPosition = new Vector2(0, YLimit.x); }
 
