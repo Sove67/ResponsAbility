@@ -13,7 +13,8 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
 
     public Note_Handler note_handler;
     public Flashcard_Handler flashcard_handler;
-
+    public Scrolling note_title_scroller;
+    public Scrolling flashcard_title_scroller;
     private void Awake()
     {
         if (File.Exists(Application.persistentDataPath + dataPath))
@@ -23,10 +24,10 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
     void OnApplicationQuit()
     {
         Debug.Log("Quit");
-        Save(note_handler.notes, flashcard_handler.decks);
+        Save(note_handler.noteList, flashcard_handler.deckList);
     }
 
-    void Save(List<Note_Handler.Note> notes, List<Flashcard_Handler.Deck> decks)
+    void Save(List<Note_Handler.Note> noteList, List<Flashcard_Handler.Deck> deckList)
     {
         FileStream file = null;
 
@@ -34,12 +35,12 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
         {
             BinaryFormatter bf = new BinaryFormatter();
 
-            if (notes != null && decks != null)
+            if (noteList != null && deckList != null)
             {
-                foreach (var note in notes)
+                foreach (var note in noteList)
                 { note.instatiated = false; }
 
-                foreach (var deck in decks)
+                foreach (var deck in deckList)
                 { 
                     deck.instatiated = false;
                     foreach (var card in deck.content)
@@ -47,7 +48,7 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
                 }
 
                 file = File.Create(Application.persistentDataPath + dataPath);
-                Save_File dataSet = new Save_File(notes, decks);
+                Save_File dataSet = new Save_File(noteList, deckList);
                 bf.Serialize(file, dataSet);
             }
             else
@@ -79,12 +80,12 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
             file = File.Open(Application.persistentDataPath + dataPath, FileMode.Open);
             loadedFile = bf.Deserialize(file) as Save_File;
 
-            if (loadedFile.notes != null && loadedFile.decks != null)
+            if (loadedFile.noteList != null && loadedFile.deckList != null)
             {
-                note_handler.notes = loadedFile.notes;
+                note_handler.noteList = loadedFile.noteList;
                 note_handler.UpdateList();
 
-                flashcard_handler.decks = loadedFile.decks;
+                flashcard_handler.deckList = loadedFile.deckList;
                 flashcard_handler.UpdateDeckList();
             }
             else

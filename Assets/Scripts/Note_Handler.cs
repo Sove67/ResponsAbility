@@ -8,7 +8,7 @@ public class Note_Handler : MonoBehaviour
 {
     // Variables
     // Note Data
-    [SerializeField] public List<Note> notes = new List<Note>();
+    [SerializeField] public List<Note> noteList = new List<Note>();
     public List<GameObject> noteUIList = new List<GameObject>();
     private int selectedNote;
 
@@ -54,7 +54,7 @@ public class Note_Handler : MonoBehaviour
     public void Start()
     {
         titleScroller.listLength = 0;
-        UpdateSelection(notes.Count - 1);
+        UpdateSelection(noteList.Count - 1);
         UpdateList();
     }
 
@@ -62,13 +62,13 @@ public class Note_Handler : MonoBehaviour
     {
         int count = 0;
 
-        foreach (var note in notes) // Update All Cards
+        foreach (var note in noteList) // Update All Cards
         {
             if (!note.instatiated) // Create Title Card.
             {
                 GameObject newNoteUI = Instantiate(titlePrefab, noteListContainer.transform);
                 noteUIList.Add(newNoteUI);
-                notes[count].instatiated = true;
+                noteList[count].instatiated = true;
             }
             if (note.instatiated)// Set Card Properties
             {
@@ -78,8 +78,8 @@ public class Note_Handler : MonoBehaviour
                 noteUIList[count].GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -spacing/2 + (count * -spacing));
                 noteUIList[count].GetComponent<Button>().onClick.RemoveAllListeners();
                 noteUIList[count].GetComponent<Button>().onClick.AddListener(() => UpdateSelection(index)); // Code from https://answers.unity.com/questions/938496/buttononclickaddlistener.html & https://answers.unity.com/questions/1384803/problem-with-onclickaddlistener.html
-                noteUIList[count].transform.Find("Title").GetComponent<Text>().text = notes[count].title;
-                noteUIList[count].transform.Find("Colour Indicator").GetComponent<Image>().color = colourOptions[notes[count].colour].color;
+                noteUIList[count].transform.Find("Title").GetComponent<Text>().text = noteList[count].title;
+                noteUIList[count].transform.Find("Colour Indicator").GetComponent<Image>().color = colourOptions[noteList[count].colour].color;
             }
             count++;
         }
@@ -107,11 +107,11 @@ public class Note_Handler : MonoBehaviour
 
         else
         {
-            noteContent.text = notes[index].content;
-            noteEditorTitle.text = notes[index].title;
-            noteEditorContent.text = notes[index].content;
-            noteEditorColourIndex = notes[index].colour;
-            noteEditorColourIndicator.GetComponent<Image>().color = colourOptions[notes[index].colour].color;
+            noteContent.text = noteList[index].content;
+            noteEditorTitle.text = noteList[index].title;
+            noteEditorContent.text = noteList[index].content;
+            noteEditorColourIndex = noteList[index].colour;
+            noteEditorColourIndicator.GetComponent<Image>().color = colourOptions[noteList[index].colour].color;
             selectedNote = index;
             editNote.interactable = true;
             deleteNote.interactable = true;
@@ -128,8 +128,8 @@ public class Note_Handler : MonoBehaviour
 
     public void Create()
     {
-        notes.Add(new Note("Untitled", System.DateTime.Now, 0, "", false));
-        UpdateSelection(notes.Count-1);
+        noteList.Add(new Note("Untitled", System.DateTime.Now, 0, "", false));
+        UpdateSelection(noteList.Count-1);
         UpdateList();
     }
 
@@ -137,11 +137,11 @@ public class Note_Handler : MonoBehaviour
     {
         if (noteEditorTitle.text == "")
         {
-            notes[selectedNote] = new Note("Untitled", System.DateTime.Now, noteEditorColourIndex, noteEditorContent.text, notes[selectedNote].instatiated);
+            noteList[selectedNote] = new Note("Untitled", System.DateTime.Now, noteEditorColourIndex, noteEditorContent.text, noteList[selectedNote].instatiated);
         }
         else
         {
-            notes[selectedNote] = new Note(noteEditorTitle.text, System.DateTime.Now, noteEditorColourIndex, noteEditorContent.text, notes[selectedNote].instatiated);
+            noteList[selectedNote] = new Note(noteEditorTitle.text, System.DateTime.Now, noteEditorColourIndex, noteEditorContent.text, noteList[selectedNote].instatiated);
         }
         UpdateSelection(selectedNote);
         UpdateList();
@@ -149,7 +149,7 @@ public class Note_Handler : MonoBehaviour
 
     public void Delete()
     {
-        notes.RemoveAt(selectedNote);
+        noteList.RemoveAt(selectedNote);
         Destroy(noteUIList[selectedNote]);
         noteUIList.RemoveAt(selectedNote);
         UpdateSelection(-1);
