@@ -71,13 +71,16 @@ public class Statistics_Handler : MonoBehaviour
     // Main Info
     public void MainContent()
     {
+        // Use Records
         // Total Time Readout
+        // Days in a row this app was used
+
+        // Input Records
         // # of words typed
         // # of letters typed
         // # of notes created
         // # of decks created
         // # of cards created
-        // Days in a row this app was used
     }
 
 
@@ -107,7 +110,6 @@ public class Statistics_Handler : MonoBehaviour
         // average score for x most recent
         // All marks ordered by date
         // Visual for improvement
-        // set a goal score
         // set a reminder if x time has passed since last study
     }
 }
