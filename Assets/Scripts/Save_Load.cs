@@ -38,7 +38,9 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
             if (noteList != null && deckList != null)
             {
                 foreach (var note in noteList)
-                { note.instatiated = false; }
+                { 
+                    note.instatiated = false;
+                }
 
                 foreach (var deck in deckList)
                 { 

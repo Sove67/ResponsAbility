@@ -33,17 +33,17 @@ public class Transition : MonoBehaviour
             if (touch.phase == TouchPhase.Ended)
             {
                 // Swipe Right
-                if (oldPositionX - panelContainer.anchoredPosition.x > transitionThreshold && page + 1 < 4)
+                if (oldPositionX - panelContainer.anchoredPosition.x > transitionThreshold && page == 0)
                 {
                     StartCoroutine(MoveToXPosition(oldPositionX - panelContainer.rect.width));
-                    page += 1;
+                    page = 1;
                 }
 
                 // Swipe Left
-                else if (oldPositionX - panelContainer.anchoredPosition.x < -transitionThreshold && page - 1 > 0)
+                else if (oldPositionX - panelContainer.anchoredPosition.x < -transitionThreshold && page == 1)
                 {
                     StartCoroutine(MoveToXPosition(oldPositionX + panelContainer.rect.width));
-                    page += -1;
+                    page = 0;
                 }
 
                 else

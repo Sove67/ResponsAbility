@@ -40,7 +40,7 @@ public class Note_Handler : MonoBehaviour
         public int colour { get; set; }
         public string content { get; set; }
         public bool instatiated { get; set; }
-        public Note(string title, System.DateTime date, int colour, string content, bool instatiated)
+        public Note(string title, System.DateTime date, int colour, string content,  bool instatiated)
         {
             this.title = title;
             this.date = date;
