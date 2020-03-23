@@ -7,39 +7,87 @@ using System;
 public class Statistics_Handler : MonoBehaviour
 {
     // Variables
-    public List<GameObject> mixedContainers;
-    int selectedTitle;
-    public List<Material> colourOptions;
-    public GameObject titlePrefab;
-    public Text generalBestStreak;
-    public Text generalCurrentStreak;
-    public Text flashcardPractices;
-    public InputField flashcardRecentScoreRange;
-    public List<List<Text>> flashcardScoreArray;
-    public InputField flashcardReminder;
-    // Visual for improvement
-
-
-    // Classes
+    // General
+    public Flashcard_Handler flashcard_handler;
+    private Flashcard_Handler.Deck currentDeck;
+    private int reminderInt;
+    // Output
+    public Text practiceCount;
+    public Text recentScore;
+    public Text averageScore;
+    public Text recentAverageScore;
+    public Text reminderInterval;
 
 
     // Functions
-    public void generalContent()
+    public void ViewScore()
     {
-        // Use Records
-        // Total Time Readout
-        // Days in a row this app was used
+        this.gameObject.SetActive(true);
+        UpdateContent();
+    }
 
-        // Input Records
-        // # of words typed
-        // # of characters typed
-        // # of notes created
-        // # of decks created
-        // # of cards created
-        // # of practices
-        // average score for x most recent
-        // All marks ordered by date
+    public void UpdateContent()
+    {
+        currentDeck = flashcard_handler.deckList[flashcard_handler.selectedDeck];
+
+        practiceCount.text = currentDeck.mark.Count.ToString(); // # of practices
+        recentScore.text = (currentDeck.mark[currentDeck.mark.Count-1].grade * 100).ToString().Substring(0, 4) + "%"; // most recent score
+
+        float avgScoreTotal = 0f;
+        for (int i = 0; i < currentDeck.mark.Count; i++)
+        {
+             avgScoreTotal += currentDeck.mark[i].grade;
+        }
+        averageScore.text = (avgScoreTotal / currentDeck.mark.Count * 100).ToString().Substring(0, 4) + "%"; // average score for 3 most recent
+
+        float recentAvgScoreTotal = 0f;
+        int count = 0;
+        for (int i = 3; i > 0; i--)
+        {
+            Debug.Log(i);
+            if (currentDeck.mark.Count >= i)
+            {
+                recentAvgScoreTotal += currentDeck.mark[currentDeck.mark.Count - i].grade;
+                count++;
+            }
+        }
+        recentAverageScore.text = (recentAvgScoreTotal / count * 100).ToString().Substring(0,4) + "%"; // average score for 3 most recent
+
+        ChangeReminder(currentDeck.reminderPeriod);
+        UpdateGraph();
+        UpdateMarkSet();
+    }
+
+    public void ChangeReminder(int mod)
+    {
+        reminderInt += mod;
+        if (reminderInt <= 0)
+        {
+            reminderInt = 0;
+            reminderInterval.text = "Never";
+        }
+        if (0 < reminderInt && reminderInt < 24)
+        {
+            reminderInterval.text = (reminderInt).ToString() + " Hour";
+            if (reminderInt > 1)
+            { reminderInterval.text += "s"; }
+        }
+        if (reminderInt >= 24)
+        {
+            reminderInterval.text = (reminderInt - 23).ToString() + " Day";
+            if (reminderInt > 24)
+            { reminderInterval.text += "s"; }
+        }
+        currentDeck.reminderPeriod = reminderInt;
+    }
+
+    public void UpdateGraph()
+    {
         // Visual for improvement
-        // set a reminder if x time has passed since last study
+    }
+
+    public void UpdateMarkSet()
+    {
+        // All marks ordered by date
     }
 }

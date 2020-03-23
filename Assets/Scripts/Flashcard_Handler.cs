@@ -13,40 +13,48 @@ public class Flashcard_Handler : MonoBehaviour
     private List<Card> currentCards = new List<Card>();
     private List<GameObject> deckUIList = new List<GameObject>();
     private List<GameObject> cardUIList = new List<GameObject>();
-    public Text deckDescription;
-    private int selectedDeck = -1;
+    public int selectedDeck = -1;
     private int selectedCard = -1;
 
     // Practice Data
     private List<Card> practiceCards = new List<Card>();
+    public GameObject practiceWindow;
+    public GameObject practiceResultGUI;
+    public Text practiceResultGUIResult;
+    public Text practiceResultGUIAnswer;
     public Text deckTitle;
     public Text cardTitle;
     public Text question;
     private int selectedPracticeCard = -1;
-    int chosenAnswer;
+    private int chosenAnswer;
     private int correctAnswer;
-    private List<int> practiceMarkIndex;
-    private List<bool> practiceMark = new List<bool>();
+    private int[] practiceMarkListIndex;
+    private bool[] practiceMarkList;
 
     // Enviroment Data
     private int deckEditorColourIndex;
-    public GameObject practiceWindow;
+    public Text deckDescription;
     public GameObject multipleChoiceWindow;
     public GameObject deckEditorColourIndicator;
     public GameObject deckListContainer;
     public GameObject cardListContainer;
     public GameObject deckTitlePrefab;
     public GameObject cardTitlePrefab;
+    public GameObject recentScoreGUI;
+    public GameObject practiceColourIndicator;
+    public Text recentScoreText;
 
     // Buttons
     public Button practiceDeck;
     public Button editDeck;
     public Button deleteDeck;
+    public Button viewScore;
     public Toggle shuffleToggle;
     public Toggle multipleChoiceToggle;
     public Toggle[] multipleChoices = new Toggle[4];
     public Button saveCard;
     public Button deleteCard;
+    public Button submitAnswer;
 
     // Inputs
     public InputField deckEditorTitle;
@@ -84,14 +92,16 @@ public class Flashcard_Handler : MonoBehaviour
         public List<Mark> mark { get; set; }
         public int colour { get; set; }
         public List<Card> content { get; set; }
+        public int reminderPeriod { get; set; }
         public bool instatiated { get; set; }
-        public Deck(string title, string description, List<Mark> mark, int colour, List<Card> content, bool instatiated)
+        public Deck(string title, string description, List<Mark> mark, int colour, List<Card> content, int reminderPeriod, bool instatiated)
         {
             this.title = title;
             this.description = description;
             this.mark = mark;
             this.colour = colour;
             this.content = content;
+            this.reminderPeriod = reminderPeriod;
             this.instatiated = instatiated;
         }
     }
@@ -99,8 +109,8 @@ public class Flashcard_Handler : MonoBehaviour
     [Serializable] public class Mark
     {
         public float grade { get; set; }
-        public List<bool> correct { get; set; }
-        public Mark(float grade, List<bool> correct)
+        public bool[] correct { get; set; }
+        public Mark(float grade, bool[] correct)
         {
             this.grade = grade;
             this.correct = correct;
@@ -164,6 +174,7 @@ public class Flashcard_Handler : MonoBehaviour
             practiceDeck.interactable = false;
             editDeck.interactable = false;
             deleteDeck.interactable = false;
+            viewScore.interactable = false;
             currentCards = new List<Card>();
         }
         else
@@ -176,6 +187,9 @@ public class Flashcard_Handler : MonoBehaviour
             practiceDeck.interactable = true;
             editDeck.interactable = true;
             deleteDeck.interactable = true;
+            if (deckList[selectedDeck].mark.Count > 0)
+            { viewScore.interactable = true; }
+            else { viewScore.interactable = false; }
             currentCards = deckList[selectedDeck].content;
         }
     }
@@ -188,7 +202,7 @@ public class Flashcard_Handler : MonoBehaviour
 
     public void CreateDeck()
     {
-        deckList.Add(new Deck("Untitled", "", new List<Mark>(), 0, new List<Card>(), false));
+        deckList.Add(new Deck("Untitled", "", new List<Mark>(), 0, new List<Card>(), 0, false));
         SelectDeck(deckList.Count - 1);
         UpdateDeckList();
     }
@@ -197,11 +211,11 @@ public class Flashcard_Handler : MonoBehaviour
     {
         if (deckEditorTitle.text == "")
         {
-            deckList[selectedDeck] = new Deck("Untitled", deckEditorDescription.text, deckList[selectedDeck].mark, deckEditorColourIndex, currentCards, deckList[selectedDeck].instatiated);
+            deckList[selectedDeck] = new Deck("Untitled", deckEditorDescription.text, deckList[selectedDeck].mark, deckEditorColourIndex, currentCards, deckList[selectedDeck].reminderPeriod, deckList[selectedDeck].instatiated);
         }
         else
         {
-            deckList[selectedDeck] = new Deck(deckEditorTitle.text, deckEditorDescription.text, deckList[selectedDeck].mark, deckEditorColourIndex, currentCards, deckList[selectedDeck].instatiated);
+            deckList[selectedDeck] = new Deck(deckEditorTitle.text, deckEditorDescription.text, deckList[selectedDeck].mark, deckEditorColourIndex, currentCards, deckList[selectedDeck].reminderPeriod, deckList[selectedDeck].instatiated);
         }
         SelectDeck(selectedDeck);
         UpdateDeckList();
@@ -290,7 +304,7 @@ public class Flashcard_Handler : MonoBehaviour
             {
                 currentCards[selectedCard] = new Card("Untitled", cardEditorQuestion.text, cardEditorAnswer.text, currentCards[selectedCard].instatiated);
             }
-            else
+            else if (cardEditorQuestion.text != "" && cardEditorAnswer.text != "")
             {
                 currentCards[selectedCard] = new Card(cardEditorTitle.text, cardEditorQuestion.text, cardEditorAnswer.text, currentCards[selectedCard].instatiated);
             }
@@ -321,22 +335,24 @@ public class Flashcard_Handler : MonoBehaviour
     // Practice
     public void LoadPracticeDeck()
     {
+        practiceColourIndicator.GetComponent<Image>().material = colourOptions[deckList[selectedDeck].colour];
         if (shuffleToggle.isOn) // if shuffling deck
         {
             practiceCards = new List<Card>(deckList[selectedDeck].content);
-            practiceMarkIndex = new List<int>(practiceCards.Count);
+            practiceMarkListIndex = new int[practiceCards.Count];
+
             for (int i = 0; i < practiceCards.Count; i++)
             {
                 Card temp1 = practiceCards[i];
-                int temp2 = practiceMarkIndex[i];
+                int temp2 = practiceMarkListIndex[i];
 
                 int randomIndex = UnityEngine.Random.Range(i, practiceCards.Count);
 
                 practiceCards[i] = practiceCards[randomIndex];
                 practiceCards[randomIndex] = temp1;
 
-                practiceMarkIndex[i] = randomIndex;
-                practiceMarkIndex[randomIndex] = temp2;
+                practiceMarkListIndex[i] = randomIndex;
+                practiceMarkListIndex[randomIndex] = temp2;
             }
         }
         else
@@ -344,7 +360,6 @@ public class Flashcard_Handler : MonoBehaviour
 
         if (multipleChoiceToggle.isOn) // If using multiple choice
         {
-            Debug.Log("Activating Choices");
             multipleChoiceWindow.gameObject.SetActive(true);
             answerInput.gameObject.SetActive(false);
         }
@@ -354,8 +369,11 @@ public class Flashcard_Handler : MonoBehaviour
             answerInput.gameObject.SetActive(true);
         }
 
-        if (practiceMark != null)
-        { practiceMark.Clear(); }
+        //Empty the list
+        practiceMarkList = new bool[practiceCards.Count];
+        for (int i = 0; i < practiceCards.Count; i++)
+        { practiceMarkList[i] = false; }
+
         deckTitle.text = deckList[selectedDeck].title;
         LoadPracticeCard(-1);
     }
@@ -382,43 +400,76 @@ public class Flashcard_Handler : MonoBehaviour
 
         if (multipleChoiceToggle.isOn) // if multiple choice
         {
+            // Create list of options
+            List<int> numbersToChooseFrom = new List<int>();
+            for (int i = 0; i < practiceCards.Count; i++)
+            {
+                numbersToChooseFrom.Add(i);
+            }
+            numbersToChooseFrom.Remove(selectedPracticeCard);
+
             for (int i = 0; i < 4; i++) // Assign random answers
             {
-                int randomIndex;
-                randomIndex = UnityEngine.Random.Range(0, practiceCards.Count - 1);
-                if (randomIndex == selectedPracticeCard)
-                { randomIndex++; }
+                int listIndex = UnityEngine.Random.Range(0, numbersToChooseFrom.Count);
+                int randomIndex = numbersToChooseFrom[listIndex];
+                numbersToChooseFrom.RemoveAt(listIndex);
 
                 multipleChoices[i].GetComponentInChildren<Text>().text = practiceCards[randomIndex].answer;
             }
+
             // Assign one correct answer
             correctAnswer = UnityEngine.Random.Range(0, 3);
             multipleChoices[correctAnswer].GetComponentInChildren<Text>().text = practiceCards[selectedPracticeCard].answer;
-        }
 
+            // Clear the last answer
+            for (int i = 0; i < multipleChoices.Length; i++)
+            {
+                multipleChoices[i].isOn = false;
+            }
+        }
+        else
+        {
+            // Clear the last answer
+            answerInput.text = "";
+        }
     }
 
     public void ChooseAnswer()
     {
+        bool active = false;
         for (int i = 0; i < multipleChoices.Length; i++)
         {
             if (multipleChoices[i].isOn)
-            {
-                chosenAnswer = i;
+            { 
+                chosenAnswer = i; 
+                active = true; 
             }
         }
+        submitAnswer.interactable = active;
     }
 
     public void CheckAnswer()
     {
         bool correct = false;
-        if (multipleChoiceToggle.isOn && chosenAnswer == correctAnswer) // If looking for multiple choice & correct
-        { correct = true; }
+        if ((multipleChoiceToggle.isOn && chosenAnswer == correctAnswer) || (answerInput.text != null && answerInput.text == practiceCards[selectedPracticeCard].answer)) // If looking for multiple choice & correct
+        { 
+            correct = true;
+            practiceResultGUIResult.text = "Correct!";
+            practiceResultGUIAnswer.text = "";
+        }
+        else
+        { 
+            practiceResultGUIResult.text = "Incorrect.";
+            practiceResultGUIAnswer.text = "The answer was: " + practiceCards[selectedPracticeCard].answer;
+        }
 
-        else if (answerInput.text != null && answerInput.text == practiceCards[selectedPracticeCard].answer) // If looking for text input & correct
-        { correct = true; }
+        practiceMarkList[selectedPracticeCard] = correct; // Record Result
+        practiceResultGUI.SetActive(true);
+    }
 
-        practiceMark.Add(correct); // Record Result
+    public void ViewedResult()
+    {
+        practiceResultGUI.SetActive(false);
         LoadPracticeCard(1); // Shift to next card
     }
 
@@ -427,17 +478,23 @@ public class Flashcard_Handler : MonoBehaviour
         practiceWindow.SetActive(false);
 
         float count = 0;
-        List<bool> organizedMarks = new List<bool>(practiceMark.Count);
+        bool[] organizedMarkList = new bool[practiceMarkList.Length];
 
-        for (int i = 0; i < practiceMark.Count; i++)
+        for (int i = 0; i < practiceMarkList.Length; i++)
         {
-            organizedMarks[i] = practiceMark[practiceMarkIndex[i]]; // Sort the marks by the shuffled index
+            if (shuffleToggle.isOn)
+            { organizedMarkList[i] = practiceMarkList[practiceMarkListIndex[i]]; } // Sort the marks by the shuffled index
 
-            if (practiceMark[i])
+            if (practiceMarkList[i])
             { count++; }
         }
 
-        Debug.Log("Newest Score: " + (count / practiceMark.Count));
-        deckList[selectedDeck].mark.Add(new Mark(count / practiceMark.Count, organizedMarks));
+        if (shuffleToggle.isOn)
+        { deckList[selectedDeck].mark.Add(new Mark(count / practiceMarkList.Length, organizedMarkList)); }
+        else
+        { deckList[selectedDeck].mark.Add(new Mark(count / practiceMarkList.Length, practiceMarkList)); }
+
+        recentScoreGUI.SetActive(true);
+        recentScoreText.text = count.ToString() + " out of " + practiceMarkList.Length.ToString() + " answers correct!";
     }
 }
