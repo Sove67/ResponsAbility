@@ -12,9 +12,10 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
     private Save_File loadedFile;
 
     public Note_Handler note_handler;
-    public Flashcard_Handler flashcard_handler;
+    public Deck_Handler deck_handler;
+    public Settings settings;
     public Scrolling note_title_scroller;
-    public Scrolling flashcard_title_scroller;
+    public Scrolling deck_title_scroller;
     private void Awake()
     {
         if (File.Exists(Application.persistentDataPath + dataPath))
@@ -24,10 +25,10 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
     void OnApplicationQuit()
     {
         Debug.Log("Quit");
-        Save(note_handler.noteList, flashcard_handler.deckList);
+        Save(note_handler.noteList, deck_handler.deckList, settings.audioToggle.isOn);
     }
 
-    void Save(List<Note_Handler.Note> noteList, List<Flashcard_Handler.Deck> deckList)
+    void Save(List<Note_Handler.Note> noteList, List<Deck_Handler.Deck> deckList, bool audio) // Save the notes and flashcard decks currently available
     {
         FileStream file = null;
 
@@ -50,7 +51,7 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
                 }
 
                 file = File.Create(Application.persistentDataPath + dataPath);
-                Save_File dataSet = new Save_File(noteList, deckList);
+                Save_File dataSet = new Save_File(noteList, deckList, audio);
                 bf.Serialize(file, dataSet);
             }
             else
@@ -72,7 +73,7 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
         }
     }
 
-    void Load()
+    void Load() // Load the notes and decks that were saved on quit
     {
         FileStream file = null;
 
@@ -87,11 +88,14 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
                 note_handler.noteList = loadedFile.noteList;
                 note_handler.UpdateList();
 
-                flashcard_handler.deckList = loadedFile.deckList;
-                flashcard_handler.UpdateDeckList();
+                deck_handler.deckList = loadedFile.deckList;
+                deck_handler.UpdateList();
             }
             else
             { throw new ArgumentException("Load data is empty."); }
+
+            settings.audioToggle.isOn = loadedFile.audio;
+            settings.ToggleAudio();
         }
 
         catch (Exception e)
@@ -106,6 +110,30 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
         {
             if (file != null)
             { file.Close(); }
+        }
+    }
+    public void Delete()
+    {
+        try
+        {
+            File.Delete(Application.persistentDataPath + dataPath);
+            for (int i = note_handler.noteList.Count-1; i >= 0; i--)
+            {
+                note_handler.Select(i);
+                note_handler.Delete();
+            }
+            note_handler.noteList = new List<Note_Handler.Note>();
+            for (int i = deck_handler.deckList.Count - 1; i >= 0; i--)
+            {
+                deck_handler.Select(i);
+                deck_handler.Delete();
+            }
+            deck_handler.deckList = new List<Deck_Handler.Deck>();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("File Deletion Failed.");
+            Debug.LogException(e);
         }
     }
 }

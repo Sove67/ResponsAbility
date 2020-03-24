@@ -16,12 +16,12 @@ public class Header : MonoBehaviour
         FunFact();
     }
 
-    public void Date()
+    public void Date() // Update the clock
     {
         date.text = System.DateTime.Now.ToString("ddd, MMM d, h:mm");
     }
 
-    public void FunFact()
+    public void FunFact() // Display a randomly chosen Fun Fact
     {
         string[] funFacts = new string[]
         {

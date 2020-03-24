@@ -8,8 +8,8 @@ public class Statistics_Handler : MonoBehaviour
 {
     // Variables
     // General
-    public Flashcard_Handler flashcard_handler;
-    private Flashcard_Handler.Deck currentDeck;
+    public Deck_Handler flashcard_handler;
+    private Deck_Handler.Deck currentDeck;
     private int reminderInt;
     // Output
     public Text practiceCount;
@@ -20,15 +20,9 @@ public class Statistics_Handler : MonoBehaviour
 
 
     // Functions
-    public void ViewScore()
+    public void UpdateContent() // assign all visual values to the parameters in the selected deck
     {
-        this.gameObject.SetActive(true);
-        UpdateContent();
-    }
-
-    public void UpdateContent()
-    {
-        currentDeck = flashcard_handler.deckList[flashcard_handler.selectedDeck];
+        currentDeck = flashcard_handler.deckList[flashcard_handler.selection];
 
         practiceCount.text = currentDeck.mark.Count.ToString(); // # of practices
         recentScore.text = (currentDeck.mark[currentDeck.mark.Count-1].grade * 100).ToString().Substring(0, 4) + "%"; // most recent score
@@ -58,7 +52,7 @@ public class Statistics_Handler : MonoBehaviour
         UpdateMarkSet();
     }
 
-    public void ChangeReminder(int mod)
+    public void ChangeReminder(int mod) // change the reminder period by a step size of "mod", allowing for a time period of Never, Hours, and Days
     {
         reminderInt += mod;
         if (reminderInt <= 0)

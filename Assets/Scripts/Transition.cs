@@ -15,6 +15,7 @@ public class Transition : MonoBehaviour
     public int page = 2;
     public float oldPositionX;
 
+
     // Functions
     private void Start()
     {
@@ -52,7 +53,7 @@ public class Transition : MonoBehaviour
         }
     }
 
-    public IEnumerator MoveToXPosition(float targetX)
+    public IEnumerator MoveToXPosition(float targetX) // Animates the panels sliding from the current position to the target position
     {
         float distance = targetX - panelContainer.anchoredPosition.x;
 

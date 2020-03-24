@@ -14,7 +14,7 @@ public class Scrolling : MonoBehaviour
     public Vector2 YLimit;
     public float YBuffer;
 
-    public void Update()
+    public void UpdateLimits() // Update the limits of the scrolling root
     {
         if ((listLength != null && listLength != oldListLength) || (content != null && GetWorldRect(content, Vector2.one).height != oldContentHeight) || YLimit == null)
         {
@@ -42,7 +42,7 @@ public class Scrolling : MonoBehaviour
         }
     }
 
-    public void Swipe(float dist, Touch touch) // Filters input to correct root
+    public void Swipe(float dist, Touch touch) // Filters input to correct root, and scrolls it to the new position, if it is within the limits.
     {
         float posMod = root.anchoredPosition.y + dist;
         if (mask.gameObject.activeSelf && GetWorldRect(mask, Vector2.one).Contains(touch.position))
@@ -63,7 +63,7 @@ public class Scrolling : MonoBehaviour
         }
     }
 
-    public void Reset()
+    public void Reset() // Moves the scrolling root to the default position
     {
         root.anchoredPosition = new Vector2(0, YLimit.x);
     }

@@ -33,7 +33,7 @@ public class Note_Handler : MonoBehaviour
     public Scrolling listScroller;
 
     // Classes
-    [Serializable] public class Note
+    [Serializable] public class Note // The details that make up one note
     {
         public string title { get; set; }
         public System.DateTime date { get; set; }
@@ -53,12 +53,14 @@ public class Note_Handler : MonoBehaviour
     // Functions
     public void Start()
     {
+        // Start the scrollable areas with a maximum distance of 0
         titleScroller.listLength = 0;
-        UpdateSelection(noteList.Count - 1);
+        titleScroller.UpdateLimits();
+        Select(-1);
         UpdateList();
     }
 
-    public void UpdateList()
+    public void UpdateList() // run through each note, and create/update a prefab to match it's data
     {
         int count = 0;
 
@@ -77,7 +79,7 @@ public class Note_Handler : MonoBehaviour
                 float spacing = titlePrefab.GetComponent<RectTransform>().rect.height;
                 noteUIList[count].GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -spacing/2 + (count * -spacing));
                 noteUIList[count].GetComponent<Button>().onClick.RemoveAllListeners();
-                noteUIList[count].GetComponent<Button>().onClick.AddListener(() => UpdateSelection(index)); // Code from https://answers.unity.com/questions/938496/buttononclickaddlistener.html & https://answers.unity.com/questions/1384803/problem-with-onclickaddlistener.html
+                noteUIList[count].GetComponent<Button>().onClick.AddListener(() => Select(index)); // Code from https://answers.unity.com/questions/938496/buttononclickaddlistener.html & https://answers.unity.com/questions/1384803/problem-with-onclickaddlistener.html
                 noteUIList[count].transform.Find("Title").GetComponent<Text>().text = noteList[count].title;
                 noteUIList[count].transform.Find("Colour Indicator").GetComponent<Image>().color = colourOptions[noteList[count].colour].color;
             }
@@ -89,9 +91,10 @@ public class Note_Handler : MonoBehaviour
         { titleScroller.listLength = (count-5) * titlePrefab.GetComponent<RectTransform>().rect.height; }
         else
         { titleScroller.listLength = 0; }
+        titleScroller.UpdateLimits();
     }
 
-    public void UpdateSelection(int index)
+    public void Select(int index) // Select note of index "index" from the deckList, assigning all visuals accordingly
     {
         if (index == -1)
         {
@@ -120,20 +123,20 @@ public class Note_Handler : MonoBehaviour
         listScroller.Reset();
     }
 
-    public void SetColour(int mod)
+    public void SetColour(int mod) // Move once through the choice of colours by a step size of "mod" and assign the new value to the indicator to preview
     {
         noteEditorColourIndex = (noteEditorColourIndex + mod + colourOptions.Count) % colourOptions.Count;
         noteEditorColourIndicator.GetComponent<Image>().color = colourOptions[noteEditorColourIndex].color;
     }
 
-    public void Create()
+    public void Create() // Create a new, empty note
     {
         noteList.Add(new Note("Untitled", System.DateTime.Now, 0, "", false));
-        UpdateSelection(noteList.Count-1);
+        Select(noteList.Count-1);
         UpdateList();
     }
 
-    public void Save()
+    public void Save() // Save all changes to the selected note
     {
         if (noteEditorTitle.text == "")
         {
@@ -143,16 +146,16 @@ public class Note_Handler : MonoBehaviour
         {
             noteList[selectedNote] = new Note(noteEditorTitle.text, System.DateTime.Now, noteEditorColourIndex, noteEditorContent.text, noteList[selectedNote].instatiated);
         }
-        UpdateSelection(selectedNote);
+        Select(selectedNote);
         UpdateList();
     }
 
-    public void Delete()
+    public void Delete() // Delete the note's info and prefab
     {
         noteList.RemoveAt(selectedNote);
         Destroy(noteUIList[selectedNote]);
         noteUIList.RemoveAt(selectedNote);
-        UpdateSelection(-1);
+        Select(-1);
         UpdateList();
     }
 }

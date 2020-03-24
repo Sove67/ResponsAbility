@@ -5,7 +5,6 @@ using UnityEngine;
 public class Input : MonoBehaviour
 {
     // The following is a modified version of Programmer's accepted solution at https://stackoverflow.com/questions/41491765/detect-swipe-gesture-direction
-
     private Vector2 finger_init;
     private Vector2 finger_last;
     private Vector2 finger_now;
@@ -14,8 +13,7 @@ public class Input : MonoBehaviour
     public Transition Transition;
     public List<Scrolling> Scrolling;
 
-    // Seperates Touch inputs
-    void Update()
+    void Update()// Seperates Touch inputs
     {
         foreach (Touch touch in UnityEngine.Input.touches)
         {
@@ -36,8 +34,7 @@ public class Input : MonoBehaviour
         }
     }
 
-    // This function organises each touch input into horizontal or vertical, and sends the swipe's distance to the corresponding function
-    void CheckSwipe(Touch touch)
+    void CheckSwipe(Touch touch)// Organise each touch input into horizontal or vertical, and send the swipe's distance to the corresponding function
     {
         float horizontal_dist = 0;
         float vertical_dist = 0;
