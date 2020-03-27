@@ -43,16 +43,16 @@ public class Deck_Handler : MonoBehaviour
         public List<Deck_Practice.Mark> mark { get; set; }
         public int colour { get; set; }
         public List<Card_Handler.Card> content { get; set; }
-        public int reminderPeriod { get; set; }
+        public Reminder_Handler.Reminder reminder { get; set; }
         public bool instatiated { get; set; }
-        public Deck(string title, string description, List<Deck_Practice.Mark> mark, int colour, List<Card_Handler.Card> content, int reminderPeriod, bool instatiated)
+        public Deck(string title, string description, List<Deck_Practice.Mark> mark, int colour, List<Card_Handler.Card> content, Reminder_Handler.Reminder reminder, bool instatiated)
         {
             this.title = title;
             this.description = description;
             this.mark = mark;
             this.colour = colour;
             this.content = content;
-            this.reminderPeriod = reminderPeriod;
+            this.reminder = reminder;
             this.instatiated = instatiated;
         }
     }
@@ -145,7 +145,7 @@ public class Deck_Handler : MonoBehaviour
 
     public void Create() // Create a new, empty deck
     {
-        deckList.Add(new Deck("Untitled", "", new List<Deck_Practice.Mark>(), 0, new List<Card_Handler.Card>(), 0, false));
+        deckList.Add(new Deck("Untitled", "", new List<Deck_Practice.Mark>(), 0, new List<Card_Handler.Card>(), new Reminder_Handler.Reminder(0, TimeSpan.Zero, System.DateTime.Now), false));
         Select(deckList.Count - 1);
         UpdateList();
     }
@@ -154,11 +154,11 @@ public class Deck_Handler : MonoBehaviour
     {
         if (editorTitle.text == "")
         {
-            deckList[selection] = new Deck("Untitled", editorDescription.text, deckList[selection].mark, editorColourIndex, card_handler.cardList, deckList[selection].reminderPeriod, deckList[selection].instatiated);
+            deckList[selection] = new Deck("Untitled", editorDescription.text, deckList[selection].mark, editorColourIndex, card_handler.cardList, deckList[selection].reminder, deckList[selection].instatiated);
         }
         else
         {
-            deckList[selection] = new Deck(editorTitle.text, editorDescription.text, deckList[selection].mark, editorColourIndex, card_handler.cardList, deckList[selection].reminderPeriod, deckList[selection].instatiated);
+            deckList[selection] = new Deck(editorTitle.text, editorDescription.text, deckList[selection].mark, editorColourIndex, card_handler.cardList, deckList[selection].reminder, deckList[selection].instatiated);
         }
         Select(selection);
         UpdateList();
