@@ -21,7 +21,7 @@ public class Graph_Renderer : MonoBehaviour
 
         float offsetX = -worldContainer.width / 2;
         float offsetY = -worldContainer.height / 2;
-        int count = deck.mark.Count;
+        int count = deck.practiceSessions.Count;
 
         Mesh mesh = new Mesh();
         List<Vector3> vertecies = new List<Vector3>();
@@ -30,15 +30,13 @@ public class Graph_Renderer : MonoBehaviour
         float interval = worldContainer.width / (count - 1);
         for (int i = 0; i < count; i++) 
         {
-            Debug.Log("Adding Mark Set at: " + i);
             // Assign the vertecies for that mark
             vertecies.Add(new Vector3(offsetX + (i * interval), offsetY, 0));
-            vertecies.Add(new Vector3(offsetX + (i * interval), offsetY + (worldContainer.height * deck.mark[i].grade), 0));
+            vertecies.Add(new Vector3(offsetX + (i * interval), offsetY + (worldContainer.height * deck.practiceSessions[i].grade), 0));
 
             // if a triangle can be created, do so.
             if (i < count -1)
             {
-                Debug.Log("Adding Triangle Set at: " + i);
                 /* vertex scheme:
                  * 1 3
                  * 0 2

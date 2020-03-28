@@ -11,6 +11,8 @@ public class Reminder_Handler : MonoBehaviour
     public Text periodText;
     public Deck_Handler deck_handler;
 
+    bool days;
+
     // Classes
     [Serializable] public class Reminder // The details of one flashcard deck, including the cards created and marks received
     {
@@ -58,26 +60,17 @@ public class Reminder_Handler : MonoBehaviour
     public void ChangeReminder(int mod) // change the reminder period by a step size of "mod", allowing for a time period of Never, Hours, and Days
     {
         Deck_Handler.Deck currentDeck = deck_handler.deckList[deck_handler.selection];
-        TimeSpan period = currentDeck.reminder.period;
 
-        if (period + TimeSpan.FromDays(mod) >= TimeSpan.FromDays(1)) // if after a the modification, the timespan is greater than a day
+        if (currentDeck.reminder.period.Days + mod >= 0) 
         {
-            period += TimeSpan.FromDays(mod);
-            periodText.text = period.Days + " Day";
-            if (period.Days > 24)
+            currentDeck.reminder.period += new TimeSpan(mod, 0, 0, 0);
+
+            periodText.text = currentDeck.reminder.period.Days + " Day";
+
+            if (currentDeck.reminder.period.Days > 1) // Plural
             { periodText.text += "s"; }
-        }
-        else if (period + TimeSpan.FromHours(mod) >= TimeSpan.FromHours(1)) // if after a the modification, the timespan is greater than an hour
-        {
-            period += TimeSpan.FromHours(mod);
-            periodText.text = period.Hours + " Hour";
-            if (period.Hours > 1)
-            { periodText.text += "s"; }
-        }
-        else // if the timespan is less than an hour when changed
-        {
-            period = TimeSpan.Zero;
-            periodText.text = "Never";
+            else if (currentDeck.reminder.period.Days == 0) // None
+            { periodText.text = "Never"; }
         }
 
         if (currentDeck.reminder != null) // If a reminder is assigned, remove it
@@ -86,7 +79,7 @@ public class Reminder_Handler : MonoBehaviour
             AndroidNotificationCenter.CancelNotification(ID);
         }
 
-        if (period > TimeSpan.Zero) // if a period is assigned schedule a notification
-        { currentDeck.reminder.ID = SendRepeatNotification("Practice Reminder", "Don't forget to practice the " + currentDeck.title + " deck!", period); }
+        if (currentDeck.reminder.period > TimeSpan.Zero) // if a period is assigned schedule a notification
+        { currentDeck.reminder.ID = SendRepeatNotification("Practice Reminder", "Don't forget to practice the " + currentDeck.title + " deck!", currentDeck.reminder.period); }
     }
 }

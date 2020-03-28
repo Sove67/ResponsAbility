@@ -40,14 +40,20 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
             {
                 foreach (var note in noteList)
                 { 
-                    note.instatiated = false;
+                    note.instantiated = false;
                 }
 
                 foreach (var deck in deckList)
                 { 
-                    deck.instatiated = false;
+                    deck.instantiated = false;
                     foreach (var card in deck.content)
-                    { card.instatiated = false; }
+                    { card.instantiated = false; }
+
+                    foreach (var session in deck.practiceSessions)
+                    {
+                        foreach (var detail in session.details)
+                        { detail.instantiated = false; }
+                    }
                 }
 
                 file = File.Create(Application.persistentDataPath + dataPath);

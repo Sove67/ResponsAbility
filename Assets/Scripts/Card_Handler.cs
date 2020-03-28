@@ -29,13 +29,13 @@ public class Card_Handler : MonoBehaviour
         public string title { get; set; }
         public string question { get; set; }
         public string answer { get; set; }
-        public bool instatiated { get; set; }
-        public Card(string title, string question, string answer, bool instatiated)
+        public bool instantiated { get; set; }
+        public Card(string title, string question, string answer, bool instantiated)
         {
             this.title = title;
             this.question = question;
             this.answer = answer;
-            this.instatiated = instatiated;
+            this.instantiated = instantiated;
         }
     }
 
@@ -51,12 +51,12 @@ public class Card_Handler : MonoBehaviour
         int count = 0;
         foreach (var card in cardList) // Update All Cards
         {
-            if (!card.instatiated) // Create Title Card.
+            if (!card.instantiated) // Create Title Card.
             {
                 cardUIList.Add(Instantiate(titlePrefab, listRoot.transform));
-                cardList[count].instatiated = true;
+                cardList[count].instantiated = true;
             }
-            if (card.instatiated)// Set Card Properties
+            if (card.instantiated)// Set Card Properties
             {
                 Vector2 position = cardUIList[count].GetComponent<RectTransform>().anchoredPosition;
                 int index = count;
@@ -117,11 +117,11 @@ public class Card_Handler : MonoBehaviour
         {
             if (editorTitle.text == "")
             {
-                cardList[selection] = new Card("Untitled", editorQuestion.text, editorAnswer.text, cardList[selection].instatiated);
+                cardList[selection] = new Card("Untitled", editorQuestion.text, editorAnswer.text, cardList[selection].instantiated);
             }
             else if (editorQuestion.text != "" && editorAnswer.text != "")
             {
-                cardList[selection] = new Card(editorTitle.text, editorQuestion.text, editorAnswer.text, cardList[selection].instatiated);
+                cardList[selection] = new Card(editorTitle.text, editorQuestion.text, editorAnswer.text, cardList[selection].instantiated);
             }
             SelectCard(-1);
             UpdateCardList();
@@ -143,7 +143,7 @@ public class Card_Handler : MonoBehaviour
         { Destroy(gameObject); }
         int limit = cardList.Count;
         for (int i = 0; i < limit; i++)
-        { cardList[i].instatiated = false; }
+        { cardList[i].instantiated = false; }
         cardUIList.Clear();
     }
 }

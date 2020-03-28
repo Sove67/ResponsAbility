@@ -13,7 +13,7 @@ public class Deck_Practice : MonoBehaviour
     private int chosenAnswer;
     private int correctAnswer;
     private int[] markListIndex;
-    private bool[] markList;
+    private Mark[] markList;
 
     // Enviroment
     public GameObject window;
@@ -43,16 +43,33 @@ public class Deck_Practice : MonoBehaviour
 
 
     // Classes
-    [Serializable] public class Mark // The marks given for one practice session for a given deck
+    [Serializable] public class SessionResult // The marks given for one practice session for a given deck
     {
         public float grade { get; set; }
-        public bool[] correct { get; set; }
-        public Mark(float grade, bool[] correct)
+        public Mark[] details { get; set; }
+        public SessionResult(float grade, Mark[] details)
         {
             this.grade = grade;
-            this.correct = correct;
+            this.details = details;
         }
     }
+    [Serializable] public class Mark // The marks given for one practice session for a given deck
+    {
+        public string question { get; set; }
+        public string expectedAnswer { get; set; }
+        public string givenAnswer { get; set; }
+        public bool correct { get; set; }
+        public bool instantiated { get; set; }
+        public Mark(string question, string expectedAnswer, string givenAnswer, bool correct, bool instantiated)
+        {
+            this.question = question;
+            this.expectedAnswer = expectedAnswer;
+            this.givenAnswer = givenAnswer;
+            this.correct = correct;
+            this.instantiated = instantiated;
+        }
+    }
+
 
     // Functions
     public void LoadPracticeDeck() // Start a practice session with the selected deck and settings
@@ -92,9 +109,7 @@ public class Deck_Practice : MonoBehaviour
         }
 
         //Empty the list
-        markList = new bool[cardList.Count];
-        for (int i = 0; i < cardList.Count; i++)
-        { markList[i] = false; }
+        markList = new Mark[cardList.Count];
 
         deckTitle.text = deck_handler.deckList[deck_handler.selection].title;
         LoadPracticeCard(-1);
@@ -181,9 +196,16 @@ public class Deck_Practice : MonoBehaviour
     public void CheckAnswer() // Match the given answer to the expected answer, and send "true" if correct
     {
         bool correct = false;
-        if ((multipleChoiceToggle.isOn && chosenAnswer == correctAnswer) || (answerInput.text != null && answerInput.text == cardList[selection].answer)) // If looking for multiple choice & correct
+        string givenAnswer = "Null";
+        if ((multipleChoiceToggle.isOn && chosenAnswer == correctAnswer) || (answerInput.text == cardList[selection].answer)) // If looking for multiple choice & correct
         {
             correct = true;
+
+            if (multipleChoiceToggle.isOn)
+            { givenAnswer = multipleChoices[chosenAnswer].GetComponentInChildren<Text>().text; }
+            else
+            { givenAnswer = answerInput.text; }
+
             resultGUIResult.text = "Correct!";
             resultGUIAnswer.text = "";
         }
@@ -193,7 +215,9 @@ public class Deck_Practice : MonoBehaviour
             resultGUIAnswer.text = "The answer was: " + cardList[selection].answer;
         }
 
-        markList[selection] = correct; // Record Result
+        Card_Handler.Card currentContent = deck_handler.deckList[deck_handler.selection].content[selection];
+
+        markList[selection] = new Mark(currentContent.question, currentContent.answer, givenAnswer, correct, false); // Record Result
         resultGUI.SetActive(true);
     }
 
@@ -202,21 +226,21 @@ public class Deck_Practice : MonoBehaviour
         window.SetActive(false);
 
         float count = 0;
-        bool[] organizedMarkList = new bool[markList.Length];
+        Mark[] organizedMarkList = new Mark[markList.Length];
 
         for (int i = 0; i < markList.Length; i++)
         {
             if (shuffleToggle.isOn)
             { organizedMarkList[i] = markList[markListIndex[i]]; } // Sort the marks by the shuffled index
 
-            if (markList[i])
+            if (markList[i].correct)
             { count++; }
         }
 
         if (shuffleToggle.isOn)
-        { deck_handler.deckList[deck_handler.selection].mark.Add(new Mark(count / markList.Length, organizedMarkList)); }
+        { deck_handler.deckList[deck_handler.selection].practiceSessions.Add(new SessionResult(count / markList.Length, organizedMarkList)); }
         else
-        { deck_handler.deckList[deck_handler.selection].mark.Add(new Mark(count / markList.Length, markList)); }
+        { deck_handler.deckList[deck_handler.selection].practiceSessions.Add(new SessionResult(count / markList.Length, markList)); }
 
         recentScoreGUI.SetActive(true);
         recentScoreText.text = count.ToString() + " out of " + markList.Length.ToString() + " answers correct!";

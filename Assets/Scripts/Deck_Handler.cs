@@ -16,6 +16,7 @@ public class Deck_Handler : MonoBehaviour
     // Enviroment Data
     private int editorColourIndex;
     public GameObject editorColourIndicator;
+    public Text reminderPeriod;
     public GameObject listRoot;
     public GameObject titlePrefab;
 
@@ -33,27 +34,27 @@ public class Deck_Handler : MonoBehaviour
     public List<Material> colourOptions;
     public Scrolling scrolling;
     public Card_Handler card_handler;
-
+    public Reminder_Handler reminder_handler;
 
     // Classes
     [Serializable] public class Deck // The details of one flashcard deck, including the cards created and marks received
     {
         public string title { get; set; }
         public string description { get; set; }
-        public List<Deck_Practice.Mark> mark { get; set; }
+        public List<Deck_Practice.SessionResult> practiceSessions { get; set; }
         public int colour { get; set; }
         public List<Card_Handler.Card> content { get; set; }
         public Reminder_Handler.Reminder reminder { get; set; }
-        public bool instatiated { get; set; }
-        public Deck(string title, string description, List<Deck_Practice.Mark> mark, int colour, List<Card_Handler.Card> content, Reminder_Handler.Reminder reminder, bool instatiated)
+        public bool instantiated { get; set; }
+        public Deck(string title, string description, List<Deck_Practice.SessionResult> practiceSessions, int colour, List<Card_Handler.Card> content, Reminder_Handler.Reminder reminder, bool instantiated)
         {
             this.title = title;
             this.description = description;
-            this.mark = mark;
+            this.practiceSessions = practiceSessions;
             this.colour = colour;
             this.content = content;
             this.reminder = reminder;
-            this.instatiated = instatiated;
+            this.instantiated = instantiated;
         }
     }
 
@@ -74,13 +75,13 @@ public class Deck_Handler : MonoBehaviour
 
         foreach (var deck in deckList) // Update All Cards
         {
-            if (!deck.instatiated) // Create Title Card.
+            if (!deck.instantiated) // Create Title Card.
             {
                 GameObject newDeckUI = Instantiate(titlePrefab, listRoot.transform);
                 deckUIList.Add(newDeckUI);
-                deckList[count].instatiated = true;
+                deckList[count].instantiated = true;
             }
-            if (deck.instatiated)// Set Card Properties
+            if (deck.instantiated)// Set Card Properties
             {
                 Vector2 position = deckUIList[count].GetComponent<RectTransform>().anchoredPosition;
                 int index = count;
@@ -95,10 +96,8 @@ public class Deck_Handler : MonoBehaviour
         }
 
         // Update Scroll Limit for Titles
-        if (count > 5)
-        { scrolling.listLength = (count - 5) * titlePrefab.GetComponent<RectTransform>().rect.height; }
-        else
-        { scrolling.listLength = 0; }
+        scrolling.listLength = (count) * titlePrefab.GetComponent<RectTransform>().rect.height;
+        scrolling.UpdateLimits();
     }
 
     public void Select(int index) // Select deck of index "index" from the deckList, assigning all visuals accordingly
@@ -109,6 +108,7 @@ public class Deck_Handler : MonoBehaviour
         {
             editorTitle.text = "";
             editorDescription.text = "";
+            reminderPeriod.text = "";
             editorColourIndex = 0;
             editorColourIndicator.GetComponent<Image>().color = colourOptions[0].color;
             practiceButton.interactable = false;
@@ -121,6 +121,7 @@ public class Deck_Handler : MonoBehaviour
         {
             editorTitle.text = deckList[selection].title;
             editorDescription.text = deckList[selection].description;
+            reminder_handler.ChangeReminder(0);
             editorColourIndex = deckList[selection].colour;
             editorColourIndicator.GetComponent<Image>().color = colourOptions[deckList[selection].colour].color;
             if (deckList[selection].content.Count > 0)
@@ -129,7 +130,7 @@ public class Deck_Handler : MonoBehaviour
             { practiceButton.interactable = false; }
             editButton.interactable = true;
             deleteButton.interactable = true;
-            if (deckList[selection].mark.Count > 0)
+            if (deckList[selection].practiceSessions.Count > 0)
             { viewScoreButton.interactable = true; }
             else { viewScoreButton.interactable = false; }
             card_handler.cardList = deckList[selection].content;
@@ -145,7 +146,7 @@ public class Deck_Handler : MonoBehaviour
 
     public void Create() // Create a new, empty deck
     {
-        deckList.Add(new Deck("Untitled", "", new List<Deck_Practice.Mark>(), 0, new List<Card_Handler.Card>(), new Reminder_Handler.Reminder(0, TimeSpan.Zero, System.DateTime.Now), false));
+        deckList.Add(new Deck("Untitled", "", new List<Deck_Practice.SessionResult>(), 0, new List<Card_Handler.Card>(), new Reminder_Handler.Reminder(0, TimeSpan.Zero, System.DateTime.Now), false));
         Select(deckList.Count - 1);
         UpdateList();
     }
@@ -154,11 +155,11 @@ public class Deck_Handler : MonoBehaviour
     {
         if (editorTitle.text == "")
         {
-            deckList[selection] = new Deck("Untitled", editorDescription.text, deckList[selection].mark, editorColourIndex, card_handler.cardList, deckList[selection].reminder, deckList[selection].instatiated);
+            deckList[selection] = new Deck("Untitled", editorDescription.text, deckList[selection].practiceSessions, editorColourIndex, card_handler.cardList, deckList[selection].reminder, deckList[selection].instantiated);
         }
         else
         {
-            deckList[selection] = new Deck(editorTitle.text, editorDescription.text, deckList[selection].mark, editorColourIndex, card_handler.cardList, deckList[selection].reminder, deckList[selection].instatiated);
+            deckList[selection] = new Deck(editorTitle.text, editorDescription.text, deckList[selection].practiceSessions, editorColourIndex, card_handler.cardList, deckList[selection].reminder, deckList[selection].instantiated);
         }
         Select(selection);
         UpdateList();

@@ -8,10 +8,10 @@ public class Scrolling : MonoBehaviour
     public RectTransform mask;
     public RectTransform root;
     public RectTransform content;
-    public float? oldContentHeight;
+    private float? oldContentHeight;
     public float? listLength;
-    public float oldListLength;
-    public Vector2 YLimit;
+    private float oldListLength;
+    private Vector2 YLimit;
     public float YBuffer;
 
     public void UpdateLimits() // Update the limits of the scrolling root
