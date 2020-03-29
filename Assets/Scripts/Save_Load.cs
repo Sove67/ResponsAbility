@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
-
+using UnityEngine.UI;
 
 public class Save_Load : MonoBehaviour // Most of this script is adapted from https://www.youtube.com/watch?v=zAhjm_-Y-SA
 {
@@ -16,6 +16,7 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
     public Settings settings;
     public Scrolling note_title_scroller;
     public Scrolling deck_title_scroller;
+
     private void Awake()
     {
         if (File.Exists(Application.persistentDataPath + dataPath))
@@ -23,11 +24,13 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
     }
 
     void OnApplicationQuit()
-    {
-        Debug.Log("Quit");
-        Save(note_handler.noteList, deck_handler.deckList, settings.audioToggle.isOn);
-    }
+    { Save(note_handler.noteList, deck_handler.deckList, settings.audioToggle.isOn); }
 
+    private void OnApplicationFocus(bool focus)
+    {
+        if (!focus)
+        { Save(note_handler.noteList, deck_handler.deckList, settings.audioToggle.isOn); }
+    }
     void Save(List<Note_Handler.Note> noteList, List<Deck_Handler.Deck> deckList, bool audio) // Save the notes and flashcard decks currently available
     {
         FileStream file = null;
@@ -109,7 +112,7 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
             if (e != null)
             { 
                 Debug.LogError("File Loading Failed.");
-                Debug.LogException(e, this); 
+                Debug.LogException(e, this);
             }
         }
         finally

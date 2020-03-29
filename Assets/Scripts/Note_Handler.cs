@@ -29,8 +29,8 @@ public class Note_Handler : MonoBehaviour
 
     // Other
     public List<Material> colourOptions;
-    public Scrolling titleScroller;
-    public Scrolling listScroller;
+    public Scrolling titleScrolling;
+    public Scrolling contentScrolling;
 
     // Classes
     [Serializable] public class Note // The details that make up one note
@@ -54,8 +54,8 @@ public class Note_Handler : MonoBehaviour
     public void Start()
     {
         // Start the scrollable areas with a maximum distance of 0
-        titleScroller.listLength = 0;
-        titleScroller.UpdateLimits();
+        titleScrolling.listLength = 0;
+        titleScrolling.UpdateLimits();
         Select(-1);
         UpdateList();
     }
@@ -87,8 +87,8 @@ public class Note_Handler : MonoBehaviour
         }
 
         // Update Scroll Limit for Titles
-        titleScroller.listLength = (count) * titlePrefab.GetComponent<RectTransform>().rect.height;
-        titleScroller.UpdateLimits();
+        titleScrolling.listLength = (count) * titlePrefab.GetComponent<RectTransform>().rect.height;
+        titleScrolling.UpdateLimits();
     }
 
     public void Select(int index) // Select note of index "index" from the deckList, assigning all visuals accordingly
@@ -117,7 +117,8 @@ public class Note_Handler : MonoBehaviour
             deleteNote.interactable = true;
         }
 
-        listScroller.Reset();
+        contentScrolling.UpdateLimits();
+        contentScrolling.Reset();
     }
 
     public void SetColour(int mod) // Move once through the choice of colours by a step size of "mod" and assign the new value to the indicator to preview
