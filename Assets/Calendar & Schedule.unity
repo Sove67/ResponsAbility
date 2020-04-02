@@ -1515,7 +1515,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &81442172
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1589,7 +1589,7 @@ MonoBehaviour:
   deck_handler: {fileID: 387305978}
   selectedPractice: 1
   sessionInput: {fileID: 1618129574}
-  markContainer: {fileID: 0}
+  markContainer: {fileID: 181043909}
   markPrefab: {fileID: 2230587743962046051, guid: a4969a496bc639e4ea6aad6a09f417a9,
     type: 3}
   markUIList: []
@@ -1599,7 +1599,7 @@ MonoBehaviour:
   recentAverageScore: {fileID: 2107418815}
   graph: {fileID: 1867408630}
   container: {fileID: 1867408629}
-  titleScrolling: {fileID: 0}
+  titleScrolling: {fileID: 871287355}
 --- !u!1 &104537679
 GameObject:
   m_ObjectHideFlags: 0
@@ -25368,7 +25368,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_TargetDisplay: 0
 --- !u!224 &2030849425
 RectTransform:

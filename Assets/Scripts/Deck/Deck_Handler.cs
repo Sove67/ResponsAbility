@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using Unity.Notifications.Android;
 
 public class Deck_Handler : MonoBehaviour
 {
@@ -170,6 +171,8 @@ public class Deck_Handler : MonoBehaviour
 
     public void Delete() // Delete the deck's info and prefab
     {
+        int ID = deckList[selection].reminder.ID ?? default(int);
+        AndroidNotificationCenter.CancelNotification(ID);
         deckList.RemoveAt(selection);
         Destroy(deckUIList[selection]);
         deckUIList.RemoveAt(selection);

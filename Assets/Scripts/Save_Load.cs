@@ -5,6 +5,7 @@ using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using UnityEngine.UI;
+using Unity.Notifications.Android;
 
 public class Save_Load : MonoBehaviour // Most of this script is adapted from https://www.youtube.com/watch?v=zAhjm_-Y-SA
 {
@@ -39,15 +40,22 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
         {
             BinaryFormatter bf = new BinaryFormatter();
 
-            if (noteList != null && deckList != null)
+            List<Note_Handler.Note> clearedNoteList = new List<Note_Handler.Note>();
+            List<Deck_Handler.Deck> clearedDeckList = new List<Deck_Handler.Deck>();
+
+            if (noteList != null)
             {
-                foreach (var note in noteList)
+                clearedNoteList = new List<Note_Handler.Note>(noteList);
+                foreach (var note in clearedNoteList)
                 { 
                     note.instantiated = false;
                 }
-
-                foreach (var deck in deckList)
-                { 
+            }
+            if (deckList != null)
+            {
+                clearedDeckList = new List<Deck_Handler.Deck>(deckList);
+                foreach (var deck in clearedDeckList)
+                {
                     deck.instantiated = false;
                     foreach (var card in deck.content)
                     { card.instantiated = false; }
@@ -58,13 +66,13 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
                         { detail.instantiated = false; }
                     }
                 }
-
+            }
+            if (clearedNoteList.Count > 0 || clearedDeckList.Count > 0)
+            {
                 file = File.Create(Application.persistentDataPath + dataPath);
-                Save_File dataSet = new Save_File(noteList, deckList, audio);
+                Save_File dataSet = new Save_File(clearedNoteList, clearedDeckList, audio);
                 bf.Serialize(file, dataSet);
             }
-            else
-            { throw new ArgumentException("Save data is empty."); }
         } 
 
         catch (Exception e)
@@ -138,6 +146,7 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
                 deck_handler.Delete();
             }
             deck_handler.deckList = new List<Deck_Handler.Deck>();
+            AndroidNotificationCenter.CancelAllScheduledNotifications();
         }
         catch (Exception e)
         {

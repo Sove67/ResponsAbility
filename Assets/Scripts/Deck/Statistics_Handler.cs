@@ -33,7 +33,6 @@ public class Statistics_Handler : MonoBehaviour
     public void UpdateContent() // assign all visual values to the parameters in the selected deck
     {
         currentDeck = deck_handler.deckList[deck_handler.selection];
-
         practiceCount.text = currentDeck.practiceSessions.Count.ToString(); // # of practices
         recentScore.text = ParseGrade(currentDeck.practiceSessions[currentDeck.practiceSessions.Count-1].grade); // most recent score
 
@@ -57,6 +56,9 @@ public class Statistics_Handler : MonoBehaviour
         recentAverageScore.text = ParseGrade(recentAvgScoreTotal / count); // average score for 3 most recent
 
         Graph_Renderer.GenerateGraph(currentDeck, container, graph);
+        
+        sessionInput.text = "1";
+        SelectSession(0);
         UpdateMarkSet();
     }
 
@@ -72,7 +74,7 @@ public class Statistics_Handler : MonoBehaviour
 
     public void SelectSession(int mod)
     {
-        int newSelection = 0;
+        int newSelection;
         if (mod == 0) // Input Field
         { newSelection = (int.Parse(sessionInput.text) - 1); }
         else // Buttons
