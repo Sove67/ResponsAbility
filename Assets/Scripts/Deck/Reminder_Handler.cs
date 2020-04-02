@@ -11,8 +11,6 @@ public class Reminder_Handler : MonoBehaviour
     public Text periodText;
     public Deck_Handler deck_handler;
 
-    bool days;
-
     // Classes
     [Serializable] public class Reminder // The details of one flashcard deck, including the cards created and marks received
     {
@@ -47,11 +45,13 @@ public class Reminder_Handler : MonoBehaviour
 
     public int SendRepeatNotification(string title, string text, System.TimeSpan period) // Start a notification that repeats every 'period'
     {
-        var notification = new AndroidNotification();
-        notification.Title = title;
-        notification.Text = text;
-        notification.FireTime = DateTime.Now + period;
-        notification.RepeatInterval = period;
+        var notification = new AndroidNotification
+        {
+            Title = title,
+            Text = text,
+            FireTime = DateTime.Now + period,
+            RepeatInterval = period
+        };
 
         int ID = AndroidNotificationCenter.SendNotification(notification, "default");
         return ID;
@@ -75,7 +75,7 @@ public class Reminder_Handler : MonoBehaviour
 
         if (currentDeck.reminder != null) // If a reminder is assigned, remove it
         {
-            int ID = currentDeck.reminder.ID ?? default(int); // Parsing nullable int into an int. Taken from:https://stackoverflow.com/questions/5995317/how-to-convert-c-sharp-nullable-int-to-int/5995418
+            int ID = currentDeck.reminder.ID ?? default; // Parsing nullable int into an int. Taken from:https://stackoverflow.com/questions/5995317/how-to-convert-c-sharp-nullable-int-to-int/5995418
             AndroidNotificationCenter.CancelNotification(ID);
         }
 

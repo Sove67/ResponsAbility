@@ -14,25 +14,24 @@ public class Scrolling : MonoBehaviour
     public Vector2 YLimit;
     public float YBuffer;
 
-
     public void UpdateLimits() // Update the limits of the titleScrolling root
     {
-        if ((listLength != null && listLength != oldListLength) || (content != null && GetWorldRect(content, Vector2.one).height != oldContentHeight) || YLimit == null)
+        if ((listLength != null && listLength != oldListLength) || (content != null && content.rect.height != oldContentHeight) || YLimit == null)
         {
             if (listLength != null) // List Root Handling
             {
-                float temp = listLength ?? default(float); // Int? to Int conversion taken from https://stackoverflow.com/questions/5995317/how-to-convert-c-sharp-nullable-int-to-int/5995418
+                float temp = listLength ?? default; // Int? to Int conversion taken from https://stackoverflow.com/questions/5995317/how-to-convert-c-sharp-nullable-int-to-int/5995418
 
                 YLimit.x = 0;
-                YLimit.y = temp - GetWorldRect(mask, Vector2.one).height; 
+                YLimit.y = temp;
                 oldListLength = temp;
             }
 
             else if (content != null) // Text Object Handling
             {
-                YLimit.x = -GetWorldRect(content, Vector2.one).height / 2;
-                YLimit.y = GetWorldRect(content, Vector2.one).height / 2;
-                oldContentHeight = GetWorldRect(content, Vector2.one).height;
+                YLimit.x = -content.rect.height / 2;
+                YLimit.y = content.rect.height / 2;
+                oldContentHeight = content.rect.height;
             }
 
             else
@@ -40,16 +39,16 @@ public class Scrolling : MonoBehaviour
                 Debug.LogError("No Limiting Object Was Attached To The Scrolling Script On " + this.name + ".");
                 YLimit = Vector2.zero;
             }
-
+            YLimit.y += YBuffer - mask.rect.height;
             Reset();
         }
-        YLimit.y += YBuffer;
     }
 
     public void Swipe(float dist, Touch touch) // Filters input to correct root, and scrolls it to the new position, if it is within the limits.
     {
         float posMod = root.anchoredPosition.y + dist;
-        if (mask.gameObject.activeSelf && GetWorldRect(mask, Vector2.one).Contains(touch.position))
+
+        if (mask.gameObject.activeSelf && RectTransformUtility.RectangleContainsScreenPoint(mask, touch.position, FindObjectOfType<Camera>()))
         {
             if (posMod <= YLimit.x) // Lowest Limit
             { root.anchoredPosition = new Vector2(0, YLimit.x); }
@@ -70,21 +69,5 @@ public class Scrolling : MonoBehaviour
     public void Reset() // Moves the titleScrolling root to the default position
     {
         root.anchoredPosition = new Vector2(0, YLimit.x);
-    }
-
-    
-    static public Rect GetWorldRect(RectTransform rt, Vector2 scale) // Code from Ash-Blue's accepted answer at https://answers.unity.com/questions/1100493/convert-recttransformrect-to-rect-world.html
-    {
-        // THIS FUNCTION NEEDS CANVAS TYPE SET TO "Screen Space - Overlay" TO FUNCTION PROPERLY
-
-        // Convert the rectangle to world corners and grab the top left
-        Vector3[] corners = new Vector3[4];
-        rt.GetWorldCorners(corners);
-        Vector3 topLeft = corners[0];
-
-        // Rescale the size appropriately based on the current Canvas scale
-        Vector2 scaledSize = new Vector2(scale.x * rt.rect.size.x, scale.y * rt.rect.size.y);
-
-        return new Rect(topLeft, scaledSize);
     }
 }

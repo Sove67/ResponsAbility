@@ -5,7 +5,8 @@ using UnityEngine;
 public class Scroll_Sizer : MonoBehaviour
 {
     public float height;
-    // Update is called once per frame
+    public Scrolling scrolling;
+
     void Update()
     {
         float oldHeight = height;
@@ -13,6 +14,7 @@ public class Scroll_Sizer : MonoBehaviour
         {
             this.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -height / 2);
         }
-        height = Scrolling.GetWorldRect(this.GetComponent<RectTransform>(), Vector2.one).height;
+        height = this.GetComponent<RectTransform>().rect.height;
+        scrolling.UpdateLimits();
     }
 }

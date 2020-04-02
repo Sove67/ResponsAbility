@@ -8,7 +8,7 @@ public class Card_Handler : MonoBehaviour
     // Variables
     // General
     public List<Card_Handler.Card> cardList = new List<Card_Handler.Card>();
-    private List<GameObject> cardUIList = new List<GameObject>();
+    readonly private List<GameObject> cardUIList = new List<GameObject>();
     private int selection = -1;
 
     // Enviroment

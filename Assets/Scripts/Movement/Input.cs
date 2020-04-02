@@ -5,7 +5,6 @@ using UnityEngine;
 public class Input : MonoBehaviour
 {
     // The following is a modified version of Programmer's accepted solution at https://stackoverflow.com/questions/41491765/detect-swipe-gesture-direction
-    private Vector2 finger_init;
     private Vector2 finger_last;
     private Vector2 finger_now;
 
@@ -19,7 +18,6 @@ public class Input : MonoBehaviour
         {
             if (touch.phase == TouchPhase.Began)
             {
-                finger_init = touch.position;
                 finger_last = touch.position;
                 finger_now = touch.position;
             }

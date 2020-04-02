@@ -55,7 +55,7 @@ public class Statistics_Handler : MonoBehaviour
         }
         recentAverageScore.text = ParseGrade(recentAvgScoreTotal / count); // average score for 3 most recent
 
-        Graph_Renderer.GenerateGraph(currentDeck, container, graph);
+        Graph_Renderer.GenerateGraph(currentDeck, container.rect, graph);
         
         sessionInput.text = "1";
         SelectSession(0);

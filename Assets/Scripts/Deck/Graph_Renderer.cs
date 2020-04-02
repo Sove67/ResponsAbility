@@ -15,24 +15,22 @@ public class Graph_Renderer : MonoBehaviour
      * Render graph with current light colour
     */
 
-    static public void GenerateGraph(Deck_Handler.Deck deck, RectTransform container, MeshFilter graph)
+    static public void GenerateGraph(Deck_Handler.Deck deck, Rect container, MeshFilter graph)
     {
-        Rect worldContainer = Scrolling.GetWorldRect(container, Vector2.one);
-
-        float offsetX = -worldContainer.width / 2;
-        float offsetY = -worldContainer.height / 2;
+        float offsetX = -container.width / 2;
+        float offsetY = -container.height / 2;
         int count = deck.practiceSessions.Count;
 
         Mesh mesh = new Mesh();
         List<Vector3> vertecies = new List<Vector3>();
         List<int> triangles = new List<int>();
 
-        float interval = worldContainer.width / (count - 1);
+        float interval = container.width / (count - 1);
         for (int i = 0; i < count; i++) 
         {
             // Assign the vertecies for that mark
             vertecies.Add(new Vector3(offsetX + (i * interval), offsetY, 0));
-            vertecies.Add(new Vector3(offsetX + (i * interval), offsetY + (worldContainer.height * deck.practiceSessions[i].grade), 0));
+            vertecies.Add(new Vector3(offsetX + (i * interval), offsetY + (container.height * deck.practiceSessions[i].grade), 0));
 
             // if a triangle can be created, do so.
             if (i < count -1)

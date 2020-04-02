@@ -11,7 +11,7 @@ public class Deck_Handler : MonoBehaviour
     // Variables
     // Deck & Card Data
     [SerializeField] public List<Deck> deckList = new List<Deck>();
-    private List<GameObject> deckUIList = new List<GameObject>();
+    readonly private List<GameObject> deckUIList = new List<GameObject>();
     public int selection = -1;
 
     // Enviroment Data
@@ -169,9 +169,12 @@ public class Deck_Handler : MonoBehaviour
         UpdateList();
     }
 
+    public void Cancel() // Reset editor values to card values
+    { Select(selection); }
+
     public void Delete() // Delete the deck's info and prefab
     {
-        int ID = deckList[selection].reminder.ID ?? default(int);
+        int ID = deckList[selection].reminder.ID ?? default;
         AndroidNotificationCenter.CancelNotification(ID);
         deckList.RemoveAt(selection);
         Destroy(deckUIList[selection]);
