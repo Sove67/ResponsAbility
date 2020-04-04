@@ -136,7 +136,7 @@ public class Deck_Handler : MonoBehaviour
             if (deckList[selection].practiceSessions.Count > 0)
             { viewScoreButton.interactable = true; }
             else { viewScoreButton.interactable = false; }
-            card_handler.cardList = deckList[selection].content;
+            card_handler.cardList = new List<Card_Handler.Card>(deckList[selection].content);
         }
         contentScrolling.UpdateLimits();
         contentScrolling.Reset();

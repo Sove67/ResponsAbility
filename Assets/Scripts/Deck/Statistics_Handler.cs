@@ -157,8 +157,10 @@ public class Statistics_Handler : MonoBehaviour
     {
         foreach (GameObject gameObject in markUIList)
         { Destroy(gameObject); }
+
         for (int i = 0; i < currentDeck.practiceSessions[selectedPractice].details.Length; i++)
         { currentDeck.practiceSessions[selectedPractice].details[i].instantiated = false; }
+
         markUIList.Clear();
     }
 

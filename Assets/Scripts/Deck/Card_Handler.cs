@@ -106,23 +106,25 @@ public class Card_Handler : MonoBehaviour
 
     public void CreateCard() // Create a new, empty card
     {
-        cardList.Add(new Card("Untitled", "", "", false));
+        cardList.Add(new Card("Untitled", "Blank", "Blank", false));
         SelectCard(cardList.Count - 1);
         UpdateCardList();
+    }
+
+    public void InputButtonToggle()
+    {
+        if (editorTitle.text == "" || editorQuestion.text == "" || editorAnswer.text == "")
+        { saveButton.interactable = false; }
+        else
+        { saveButton.interactable = true; }
     }
 
     public void SaveCard() // Save all changes to the selected card
     {
         if (selection != -1)
         {
-            if (editorTitle.text == "")
-            {
-                cardList[selection] = new Card("Untitled", editorQuestion.text, editorAnswer.text, cardList[selection].instantiated);
-            }
-            else if (editorQuestion.text != "" && editorAnswer.text != "")
-            {
-                cardList[selection] = new Card(editorTitle.text, editorQuestion.text, editorAnswer.text, cardList[selection].instantiated);
-            }
+            cardList[selection] = new Card(editorTitle.text, editorQuestion.text, editorAnswer.text, cardList[selection].instantiated);
+
             SelectCard(-1);
             UpdateCardList();
         }
