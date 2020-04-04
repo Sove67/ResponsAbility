@@ -11,12 +11,21 @@ public class Statistics_Handler : MonoBehaviour
     public Deck_Handler deck_handler;
     private Deck_Handler.Deck currentDeck;
 
+    // Graph
+    public MeshFilter graph;
+    public RectTransform container;
+    public GameObject graphError;
+
     // Detailed Marks
     public int selectedPractice;
     public InputField sessionInput;
     public GameObject markContainer;
     public GameObject markPrefab;
     public List<GameObject> markUIList = new List<GameObject>();
+
+    // Detailed Text
+    public GameObject detailedTextGUI;
+    public Text detailedText;
 
     // Output
     public Text practiceCount;
@@ -25,8 +34,6 @@ public class Statistics_Handler : MonoBehaviour
     public Text recentAverageScore;
 
     // Enviroment
-    public MeshFilter graph;
-    public RectTransform container;
     public Scrolling titleScrolling;
 
     // Functions
@@ -34,12 +41,12 @@ public class Statistics_Handler : MonoBehaviour
     {
         currentDeck = deck_handler.deckList[deck_handler.selection];
         practiceCount.text = currentDeck.practiceSessions.Count.ToString(); // # of practices
-        recentScore.text = ParseGrade(currentDeck.practiceSessions[currentDeck.practiceSessions.Count-1].grade); // most recent score
+        recentScore.text = ParseGrade(currentDeck.practiceSessions[currentDeck.practiceSessions.Count - 1].grade); // most recent score
 
         float avgScoreTotal = 0f;
         for (int i = 0; i < currentDeck.practiceSessions.Count; i++)
         {
-             avgScoreTotal += currentDeck.practiceSessions[i].grade;
+            avgScoreTotal += currentDeck.practiceSessions[i].grade;
         }
         averageScore.text = ParseGrade(avgScoreTotal / currentDeck.practiceSessions.Count); // average score for 3 most recent
 
@@ -55,11 +62,13 @@ public class Statistics_Handler : MonoBehaviour
         }
         recentAverageScore.text = ParseGrade(recentAvgScoreTotal / count); // average score for 3 most recent
 
-        Graph_Renderer.GenerateGraph(currentDeck, container.rect, graph);
-        
+        if (Graph_Renderer.GenerateGraph(currentDeck, container.rect, graph))
+        { graphError.SetActive(false); }
+        else
+        { graphError.SetActive(false); }
+
         sessionInput.text = "1";
         SelectSession(0);
-        UpdateMarkSet();
     }
 
     static public string ParseGrade(float grade)
@@ -79,13 +88,10 @@ public class Statistics_Handler : MonoBehaviour
         { newSelection = (int.Parse(sessionInput.text) - 1); }
         else // Buttons
         { newSelection = selectedPractice + mod; }
-
         // Check input is within bounds, reject if not
         if (0 <= newSelection && newSelection < currentDeck.practiceSessions.Count)
-        { 
-            // Clear old list if it was changed
-            if (selectedPractice != newSelection)
-            { ClearMarkSet(); }
+        {
+            ClearDetails();
             selectedPractice = newSelection;
             sessionInput.text = (selectedPractice + 1).ToString();
 
@@ -109,13 +115,24 @@ public class Statistics_Handler : MonoBehaviour
             }
             if (detail.instantiated)// Set Card Properties
             {
-                Vector2 position = markUIList[count].GetComponent<RectTransform>().anchoredPosition;
                 int index = count;
                 float spacing = markPrefab.GetComponent<RectTransform>().rect.height;
                 markUIList[count].GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -spacing / 2 + (count * -spacing));
-                markUIList[count].transform.Find("Question Text").GetComponent<Text>().text = details[count].question;
-                markUIList[count].transform.Find("Answer Text").GetComponent<Text>().text = details[count].expectedAnswer;
-                markUIList[count].transform.Find("Result Text").GetComponent<Text>().text = details[count].givenAnswer;
+
+                string question = details[count].question;
+                markUIList[count].transform.Find("Question Text").GetComponent<Text>().text = question;
+                markUIList[count].transform.Find("Question Text").GetComponent<Button>().onClick.RemoveAllListeners();
+                markUIList[count].transform.Find("Question Text").GetComponent<Button>().onClick.AddListener(() => DetailedText(question)); // Code from https://answers.unity.com/questions/938496/buttononclickaddlistener.html & https://answers.unity.com/questions/1384803/problem-with-onclickaddlistener.html
+
+                string answer = details[count].answer;
+                markUIList[count].transform.Find("Answer Text").GetComponent<Text>().text = answer;
+                markUIList[count].transform.Find("Answer Text").GetComponent<Button>().onClick.RemoveAllListeners();
+                markUIList[count].transform.Find("Answer Text").GetComponent<Button>().onClick.AddListener(() => DetailedText(answer)); // Code from https://answers.unity.com/questions/938496/buttononclickaddlistener.html & https://answers.unity.com/questions/1384803/problem-with-onclickaddlistener.html
+
+                string input = details[count].input;
+                markUIList[count].transform.Find("Input Text").GetComponent<Text>().text = input;
+                markUIList[count].transform.Find("Input Text").GetComponent<Button>().onClick.RemoveAllListeners();
+                markUIList[count].transform.Find("Input Text").GetComponent<Button>().onClick.AddListener(() => DetailedText(input)); // Code from https://answers.unity.com/questions/938496/buttononclickaddlistener.html & https://answers.unity.com/questions/1384803/problem-with-onclickaddlistener.html
 
                 if (currentDeck.practiceSessions[selectedPractice].details[count].correct)
                 {
@@ -136,13 +153,18 @@ public class Statistics_Handler : MonoBehaviour
         titleScrolling.UpdateLimits();
     }
 
-    public void ClearMarkSet()
+    public void ClearDetails()
     {
         foreach (GameObject gameObject in markUIList)
         { Destroy(gameObject); }
-        int limit = currentDeck.practiceSessions[selectedPractice].details.Length;
-        for (int i = 0; i < limit; i++)
+        for (int i = 0; i < currentDeck.practiceSessions[selectedPractice].details.Length; i++)
         { currentDeck.practiceSessions[selectedPractice].details[i].instantiated = false; }
         markUIList.Clear();
+    }
+
+    public void DetailedText(string text)
+    {
+        detailedTextGUI.SetActive(true);
+        detailedText.text = text;
     }
 }

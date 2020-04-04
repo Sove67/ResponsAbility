@@ -57,15 +57,15 @@ public class Deck_Practice : MonoBehaviour
     [Serializable] public class Mark // The marks given for one practice session for a given deck
     {
         public string question { get; set; }
-        public string expectedAnswer { get; set; }
-        public string givenAnswer { get; set; }
+        public string answer { get; set; }
+        public string input { get; set; }
         public bool correct { get; set; }
         public bool instantiated { get; set; }
-        public Mark(string question, string expectedAnswer, string givenAnswer, bool correct, bool instantiated)
+        public Mark(string question, string answer, string input, bool correct, bool instantiated)
         {
             this.question = question;
-            this.expectedAnswer = expectedAnswer;
-            this.givenAnswer = givenAnswer;
+            this.answer = answer;
+            this.input = input;
             this.correct = correct;
             this.instantiated = instantiated;
         }
@@ -202,10 +202,6 @@ public class Deck_Practice : MonoBehaviour
         {
             correct = true;
 
-            if (multipleChoiceToggle.isOn)
-            { givenAnswer = multipleChoices[chosenAnswer].GetComponentInChildren<Text>().text; }
-            else
-            { givenAnswer = answerInput.text; }
 
             resultGUIResult.text = "Correct!";
             resultGUIAnswer.text = "";
@@ -215,6 +211,11 @@ public class Deck_Practice : MonoBehaviour
             resultGUIResult.text = "Incorrect.";
             resultGUIAnswer.text = "The answer was: " + cardList[selection].answer;
         }
+
+        if (multipleChoiceToggle.isOn)
+        { givenAnswer = multipleChoices[chosenAnswer].GetComponentInChildren<Text>().text; }
+        else
+        { givenAnswer = answerInput.text; }
 
         Card_Handler.Card currentContent = deck_handler.deckList[deck_handler.selection].content[selection];
 
@@ -245,5 +246,7 @@ public class Deck_Practice : MonoBehaviour
 
         recentScoreGUI.SetActive(true);
         recentScoreText.text = count.ToString() + " out of " + markList.Length.ToString() + " answers correct!";
+
+        deck_handler.Select(deck_handler.selection);
     }
 }

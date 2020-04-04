@@ -37,6 +37,7 @@ public class Deck_Handler : MonoBehaviour
     public Scrolling contentScrolling;
     public Card_Handler card_handler;
     public Reminder_Handler reminder_handler;
+    public Statistics_Handler statistics_handler;
 
     // Classes
     [Serializable] public class Deck // The details of one flashcard deck, including the cards created and marks received

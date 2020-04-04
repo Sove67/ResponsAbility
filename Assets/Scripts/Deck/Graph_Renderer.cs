@@ -15,48 +15,54 @@ public class Graph_Renderer : MonoBehaviour
      * Render graph with current light colour
     */
 
-    static public void GenerateGraph(Deck_Handler.Deck deck, Rect container, MeshFilter graph)
+    static public bool GenerateGraph(Deck_Handler.Deck deck, Rect container, MeshFilter graph)
     {
-        float offsetX = -container.width / 2;
-        float offsetY = -container.height / 2;
         int count = deck.practiceSessions.Count;
-
-        Mesh mesh = new Mesh();
-        List<Vector3> vertecies = new List<Vector3>();
-        List<int> triangles = new List<int>();
-
-        float interval = container.width / (count - 1);
-        for (int i = 0; i < count; i++) 
+        if (count > 1)
         {
-            // Assign the vertecies for that mark
-            vertecies.Add(new Vector3(offsetX + (i * interval), offsetY, 0));
-            vertecies.Add(new Vector3(offsetX + (i * interval), offsetY + (container.height * deck.practiceSessions[i].grade), 0));
+            float offsetX = -container.width / 2;
+            float offsetY = -container.height / 2;
 
-            // if a triangle can be created, do so.
-            if (i < count -1)
+            Mesh mesh = new Mesh();
+            List<Vector3> vertecies = new List<Vector3>();
+            List<int> triangles = new List<int>();
+
+            float interval = container.width / (count - 1);
+            for (int i = 0; i < count; i++)
             {
-                /* vertex scheme:
-                 * 1 3
-                 * 0 2
-                 * 
-                 * connections:
-                 * 0, 3, 2 & 0, 1, 3
-                 */
+                // Assign the vertecies for that mark
+                vertecies.Add(new Vector3(offsetX + (i * interval), offsetY, 0));
+                vertecies.Add(new Vector3(offsetX + (i * interval), offsetY + (container.height * deck.practiceSessions[i].grade), 0));
 
-                int index = i * 2;
-                triangles.Add(index    );
-                triangles.Add(index + 3);
-                triangles.Add(index + 2);
+                // if a triangle can be created, do so.
+                if (i < count - 1)
+                {
+                    /* vertex scheme:
+                     * 1 3
+                     * 0 2
+                     * 
+                     * connections:
+                     * 0, 3, 2 & 0, 1, 3
+                     */
 
-                triangles.Add(index    );
-                triangles.Add(index + 1);
-                triangles.Add(index + 3);
+                    int index = i * 2;
+                    triangles.Add(index);
+                    triangles.Add(index + 3);
+                    triangles.Add(index + 2);
+
+                    triangles.Add(index);
+                    triangles.Add(index + 1);
+                    triangles.Add(index + 3);
+                }
             }
+
+            mesh.vertices = vertecies.ToArray();
+            mesh.triangles = triangles.ToArray();
+
+            graph.mesh = mesh;
+            return true;
         }
-
-        mesh.vertices = vertecies.ToArray();
-        mesh.triangles = triangles.ToArray();
-
-        graph.mesh = mesh;
+        else
+        { return false; }
     }
 }
