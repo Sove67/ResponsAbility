@@ -15,6 +15,7 @@ public class Statistics_Handler : MonoBehaviour
     public MeshFilter graph;
     public RectTransform container;
     public GameObject graphError;
+    public GameObject graphPointer;
 
     // Detailed Marks
     public int selectedPractice;
@@ -22,6 +23,8 @@ public class Statistics_Handler : MonoBehaviour
     public GameObject markContainer;
     public GameObject markPrefab;
     public List<GameObject> markUIList = new List<GameObject>();
+    public RectTransform header;
+    public Text sessionMark;
 
     // Detailed Text
     public GameObject detailedTextGUI;
@@ -34,7 +37,7 @@ public class Statistics_Handler : MonoBehaviour
     public Text recentAverageScore;
 
     // Enviroment
-    public Scrolling titleScrolling;
+    public Scrolling markScrolling;
 
     // Functions
     public void UpdateContent() // assign all visual values to the parameters in the selected deck
@@ -63,9 +66,15 @@ public class Statistics_Handler : MonoBehaviour
         recentAverageScore.text = ParseGrade(recentAvgScoreTotal / count); // average score for 3 most recent
 
         if (Graph_Renderer.GenerateGraph(currentDeck, container.rect, graph))
-        { graphError.SetActive(false); }
+        { 
+            graphError.SetActive(false);
+            graphPointer.SetActive(true);
+        }
         else
-        { graphError.SetActive(false); }
+        { 
+            graphError.SetActive(true);
+            graphPointer.SetActive(false);
+        }
 
         sessionInput.text = "1";
         SelectSession(0);
@@ -84,20 +93,27 @@ public class Statistics_Handler : MonoBehaviour
     public void SelectSession(int mod)
     {
         int newSelection;
-        if (mod == 0) // Input Field
+        if (mod == 0) // Input from Text Field
         { newSelection = (int.Parse(sessionInput.text) - 1); }
-        else // Buttons
+        else // Input from Buttons
         { newSelection = selectedPractice + mod; }
-        // Check input is within bounds, reject if not
+
+        // Check input is within bounds 
         if (0 <= newSelection && newSelection < currentDeck.practiceSessions.Count)
         {
             ClearDetails();
             selectedPractice = newSelection;
             sessionInput.text = (selectedPractice + 1).ToString();
-
+            sessionMark.text = ParseGrade(currentDeck.practiceSessions[selectedPractice].grade);
             UpdateMarkSet();
+
+            // Move Pointer In Graph
+            if (graphPointer.activeSelf)
+            {
+                graphPointer.GetComponent<RectTransform>().anchoredPosition = graph.mesh.vertices[selectedPractice * 2 + 1];
+            }
         }
-        else
+        else // reject if not
         { sessionInput.text = (selectedPractice + 1).ToString(); }
     }
 
@@ -149,15 +165,14 @@ public class Statistics_Handler : MonoBehaviour
         }
 
         // Update Scroll Limit for Titles
-        titleScrolling.listLength = (count) * markPrefab.GetComponent<RectTransform>().rect.height;
-        titleScrolling.UpdateLimits();
+        markScrolling.listLength = ((count) * markPrefab.GetComponent<RectTransform>().rect.height) + header.rect.height;
+        markScrolling.UpdateLimits();
     }
 
     public void ClearDetails()
     {
         foreach (GameObject gameObject in markUIList)
         { Destroy(gameObject); }
-
         for (int i = 0; i < currentDeck.practiceSessions[selectedPractice].details.Length; i++)
         { currentDeck.practiceSessions[selectedPractice].details[i].instantiated = false; }
 

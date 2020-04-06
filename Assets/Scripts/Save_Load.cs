@@ -40,37 +40,10 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
         {
             BinaryFormatter bf = new BinaryFormatter();
 
-            List<Note_Handler.Note> clearedNoteList = new List<Note_Handler.Note>();
-            List<Deck_Handler.Deck> clearedDeckList = new List<Deck_Handler.Deck>();
-
-            if (noteList != null)
-            {
-                clearedNoteList = new List<Note_Handler.Note>(noteList);
-                foreach (var note in clearedNoteList)
-                { 
-                    note.instantiated = false;
-                }
-            }
-            if (deckList != null)
-            {
-                clearedDeckList = new List<Deck_Handler.Deck>(deckList);
-                foreach (var deck in clearedDeckList)
-                {
-                    deck.instantiated = false;
-                    foreach (var card in deck.content)
-                    { card.instantiated = false; }
-
-                    foreach (var session in deck.practiceSessions)
-                    {
-                        foreach (var detail in session.details)
-                        { detail.instantiated = false; }
-                    }
-                }
-            }
-            if (clearedNoteList.Count > 0 || clearedDeckList.Count > 0)
+            if (noteList.Count > 0 || deckList.Count > 0)
             {
                 file = File.Create(Application.persistentDataPath + dataPath);
-                Save_File dataSet = new Save_File(clearedNoteList, clearedDeckList, audio);
+                Save_File dataSet = new Save_File(noteList, deckList, audio);
                 bf.Serialize(file, dataSet);
             }
         } 
@@ -100,12 +73,38 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
             file = File.Open(Application.persistentDataPath + dataPath, FileMode.Open);
             loadedFile = bf.Deserialize(file) as Save_File;
 
-            if (loadedFile.noteList != null && loadedFile.deckList != null)
+            List<Note_Handler.Note> clearedNoteList = new List<Note_Handler.Note>(loadedFile.noteList);
+            List<Deck_Handler.Deck> clearedDeckList = new List<Deck_Handler.Deck>(loadedFile.deckList);
+
+            if (clearedNoteList != null)
             {
-                note_handler.noteList = loadedFile.noteList;
+                foreach (var note in clearedNoteList)
+                {
+                    note.instantiated = false;
+                }
+            }
+            if (clearedDeckList != null)
+            {
+                foreach (var deck in clearedDeckList)
+                {
+                    deck.instantiated = false;
+                    foreach (var card in deck.content)
+                    { card.instantiated = false; }
+
+                    foreach (var session in deck.practiceSessions)
+                    {
+                        foreach (var detail in session.details)
+                        { detail.instantiated = false; }
+                    }
+                }
+            }
+
+            if (clearedNoteList != null && clearedDeckList != null)
+            {
+                note_handler.noteList = clearedNoteList;
                 note_handler.UpdateList();
 
-                deck_handler.deckList = loadedFile.deckList;
+                deck_handler.deckList = clearedDeckList;
                 deck_handler.UpdateList();
             }
             else

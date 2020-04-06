@@ -8,7 +8,7 @@ public class Input : MonoBehaviour
     private Vector2 finger_last;
     private Vector2 finger_now;
 
-    public float touchMod;
+    public int touchMod;
     public Transition Transition;
     public List<Scrolling> Scrolling;
 
@@ -45,8 +45,12 @@ public class Input : MonoBehaviour
         else if (Mathf.Abs(finger_now.y - finger_last.y) > Mathf.Abs(finger_now.x - finger_last.x))
         { vertical_dist = (finger_now.y - finger_last.y); }
 
+        // Scales Input to Screen Size
+        horizontal_dist = horizontal_dist / Screen.width * touchMod;
+        vertical_dist = vertical_dist / Screen.height * touchMod;
+
         // Sends Values to their handlers
-        Transition.Swipe(horizontal_dist*touchMod, touch);
+        Transition.Swipe(horizontal_dist, touch);
         foreach (var script in Scrolling)
         {
             script.Swipe(vertical_dist, touch);

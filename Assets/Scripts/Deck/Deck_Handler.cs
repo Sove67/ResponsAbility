@@ -15,6 +15,7 @@ public class Deck_Handler : MonoBehaviour
     public int selection = -1;
 
     // Enviroment Data
+    public Text description;
     private int editorColourIndex;
     public GameObject editorColourIndicator;
     public Text reminderPeriod;
@@ -109,6 +110,7 @@ public class Deck_Handler : MonoBehaviour
         selection = index;
         if (index == -1)
         {
+            description.text = "";
             editorTitle.text = "";
             editorDescription.text = "";
             reminderPeriod.text = "";
@@ -122,6 +124,7 @@ public class Deck_Handler : MonoBehaviour
         }
         else
         {
+            description.text = deckList[selection].description;
             editorTitle.text = deckList[selection].title;
             editorDescription.text = deckList[selection].description;
             reminder_handler.ChangeReminder(0);
@@ -149,7 +152,7 @@ public class Deck_Handler : MonoBehaviour
         editorColourIndicator.GetComponent<Image>().color = colourOptions[editorColourIndex].color;
     }
 
-    public void Create() // Create a new, empty deck
+    public void Create() // Create a new, empty deck with one empty card
     {
         deckList.Add(new Deck("Untitled", "", new List<Deck_Practice.SessionResult>(), 0, new List<Card_Handler.Card>(), new Reminder_Handler.Reminder(0, TimeSpan.Zero, System.DateTime.Now), false));
         Select(deckList.Count - 1);

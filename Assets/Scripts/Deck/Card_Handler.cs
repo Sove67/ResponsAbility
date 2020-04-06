@@ -106,7 +106,7 @@ public class Card_Handler : MonoBehaviour
 
     public void CreateCard() // Create a new, empty card
     {
-        cardList.Add(new Card("Untitled", "Blank", "Blank", false));
+        cardList.Add(new Card("Untitled", "Question", "Answer", false));
         SelectCard(cardList.Count - 1);
         UpdateCardList();
     }

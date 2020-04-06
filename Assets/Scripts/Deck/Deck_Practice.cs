@@ -41,6 +41,7 @@ public class Deck_Practice : MonoBehaviour
     // Other
     public Deck_Handler deck_handler;
     public List<Material> colourOptions;
+    public Reminder_Handler Reminder_handler;
 
 
     // Classes
@@ -75,6 +76,7 @@ public class Deck_Practice : MonoBehaviour
     // Functions
     public void LoadPracticeDeck() // Start a practice session with the selected deck and settings
     {
+        Debug.Log("Colour: " + deck_handler.deckList[deck_handler.selection].colour);
         colourIndicator.GetComponent<Image>().material = colourOptions[deck_handler.deckList[deck_handler.selection].colour];
         if (shuffleToggle.isOn) // if shuffling deck
         {
@@ -197,7 +199,7 @@ public class Deck_Practice : MonoBehaviour
     public void CheckAnswer() // Match the given answer to the expected answer, and send "true" if correct
     {
         bool correct = false;
-        string givenAnswer = "Null";
+        string givenAnswer;
         if ((multipleChoiceToggle.isOn && chosenAnswer == correctAnswer) || (answerInput.text == cardList[selection].answer)) // If looking for multiple choice & correct
         {
             correct = true;
@@ -248,5 +250,7 @@ public class Deck_Practice : MonoBehaviour
         recentScoreText.text = count.ToString() + " out of " + markList.Length.ToString() + " answers correct!";
 
         deck_handler.Select(deck_handler.selection);
+
+        Reminder_handler.ChangeReminder(0); // Reset time before next reminder
     }
 }
