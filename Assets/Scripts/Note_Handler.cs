@@ -36,14 +36,12 @@ public class Note_Handler : MonoBehaviour
     [Serializable] public class Note // The details that make up one note
     {
         public string title { get; set; }
-        public System.DateTime date { get; set; }
         public int colour { get; set; }
         public string content { get; set; }
         public bool instantiated { get; set; }
-        public Note(string title, System.DateTime date, int colour, string content,  bool instantiated)
+        public Note(string title, int colour, string content,  bool instantiated)
         {
             this.title = title;
-            this.date = date;
             this.colour = colour;
             this.content = content;
             this.instantiated = instantiated;
@@ -129,7 +127,7 @@ public class Note_Handler : MonoBehaviour
 
     public void Create() // Create a new, empty note
     {
-        noteList.Add(new Note("Untitled", System.DateTime.Now, 0, "", false));
+        noteList.Add(new Note("Untitled", 0, "", false));
         Select(noteList.Count-1);
         UpdateList();
     }
@@ -138,11 +136,11 @@ public class Note_Handler : MonoBehaviour
     {
         if (noteEditorTitle.text == "")
         {
-            noteList[selectedNote] = new Note("Untitled", System.DateTime.Now, noteEditorColourIndex, noteEditorContent.text, noteList[selectedNote].instantiated);
+            noteList[selectedNote] = new Note("Untitled", noteEditorColourIndex, noteEditorContent.text, noteList[selectedNote].instantiated);
         }
         else
         {
-            noteList[selectedNote] = new Note(noteEditorTitle.text, System.DateTime.Now, noteEditorColourIndex, noteEditorContent.text, noteList[selectedNote].instantiated);
+            noteList[selectedNote] = new Note(noteEditorTitle.text, noteEditorColourIndex, noteEditorContent.text, noteList[selectedNote].instantiated);
         }
         Select(selectedNote);
         UpdateList();

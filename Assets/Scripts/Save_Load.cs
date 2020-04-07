@@ -4,12 +4,12 @@ using UnityEngine;
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
-using UnityEngine.UI;
 using Unity.Notifications.Android;
-
+using UnityEngine.Networking;
 public class Save_Load : MonoBehaviour // Most of this script is adapted from https://www.youtube.com/watch?v=zAhjm_-Y-SA
 {
     private readonly string dataPath = "/Save.dat";
+    private readonly string tutorialPath = "/Tutorial.dat";
     private Save_File loadedFile;
 
     public Note_Handler note_handler;
@@ -20,8 +20,23 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
 
     private void Awake()
     {
+        // If program has saved a file before, load it.
         if (File.Exists(Application.persistentDataPath + dataPath))
-        { Load(); }
+        {
+            Load(Application.persistentDataPath + dataPath);
+        }
+
+        // Otherwize, it must be the first opening, so load the tutorial.
+        else
+        {
+#if UNITY_ANDROID // Need to extract data from compressed file using WebLoad if running on an android
+            WebLoad(Application.streamingAssetsPath + tutorialPath, Application.persistentDataPath + dataPath);
+            Load(Application.persistentDataPath + dataPath);
+
+#else // Just load the data otherwise
+            Load(Application.streamingAssetsPath + tutorialPath);
+#endif
+        }
     }
 
     void OnApplicationQuit()
@@ -32,6 +47,7 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
         if (!focus)
         { Save(note_handler.noteList, deck_handler.deckList, settings.audioToggle.isOn); }
     }
+
     void Save(List<Note_Handler.Note> noteList, List<Deck_Handler.Deck> deckList, bool audio) // Save the notes and flashcard decks currently available
     {
         FileStream file = null;
@@ -63,14 +79,14 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
         }
     }
 
-    void Load() // Load the notes and decks that were saved on quit
+    void Load(string path) // Load the notes and decks that were saved on quit
     {
         FileStream file = null;
 
         try
         {
             BinaryFormatter bf = new BinaryFormatter();
-            file = File.Open(Application.persistentDataPath + dataPath, FileMode.Open);
+            file = File.Open(path, FileMode.Open);
             loadedFile = bf.Deserialize(file) as Save_File;
 
             List<Note_Handler.Note> clearedNoteList = new List<Note_Handler.Note>(loadedFile.noteList);
@@ -79,9 +95,7 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
             if (clearedNoteList != null)
             {
                 foreach (var note in clearedNoteList)
-                {
-                    note.instantiated = false;
-                }
+                { note.instantiated = false; }
             }
             if (clearedDeckList != null)
             {
@@ -117,7 +131,7 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
         catch (Exception e)
         {
             if (e != null)
-            { 
+            {
                 Debug.LogError("File Loading Failed.");
                 Debug.LogException(e, this);
             }
@@ -128,11 +142,36 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
             { file.Close(); }
         }
     }
-    public void Delete()
+
+    void WebLoad(string inputPath, string outputPath) // Load a file from the compressed StreamingAssets folder on android
     {
         try
         {
-            File.Delete(Application.persistentDataPath + dataPath);
+            var loadingRequest = UnityWebRequest.Get(inputPath);
+            loadingRequest.SendWebRequest();
+            while (!loadingRequest.isDone)
+            {
+                if (loadingRequest.isNetworkError || loadingRequest.isHttpError)
+                { throw new ArgumentException("Network Error."); }
+            }
+            if (!(loadingRequest.isNetworkError || loadingRequest.isHttpError))
+            {
+                File.WriteAllBytes(outputPath, loadingRequest.downloadHandler.data);
+            }
+        }
+        catch (Exception e)
+        {
+            if (e != null)
+            {
+                Debug.LogError("Web File Loading Failed.");
+                Debug.LogException(e, this);
+            }
+        }
+    }
+    public void Delete() // Save a Save_File with an empty note and deck list, and clear the currently used lists.
+    {
+        try
+        {
             for (int i = note_handler.noteList.Count-1; i >= 0; i--)
             {
                 note_handler.Select(i);
@@ -145,6 +184,9 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
                 deck_handler.Delete();
             }
             deck_handler.deckList = new List<Deck_Handler.Deck>();
+
+            Save(note_handler.noteList, deck_handler.deckList, settings.audioToggle.isOn);
+
             AndroidNotificationCenter.CancelAllScheduledNotifications();
         }
         catch (Exception e)

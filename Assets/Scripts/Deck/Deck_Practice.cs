@@ -76,7 +76,6 @@ public class Deck_Practice : MonoBehaviour
     // Functions
     public void LoadPracticeDeck() // Start a practice session with the selected deck and settings
     {
-        Debug.Log("Colour: " + deck_handler.deckList[deck_handler.selection].colour);
         colourIndicator.GetComponent<Image>().material = colourOptions[deck_handler.deckList[deck_handler.selection].colour];
         if (shuffleToggle.isOn) // if shuffling deck
         {
@@ -146,11 +145,11 @@ public class Deck_Practice : MonoBehaviour
             {
                 numbersToChooseFrom.Add(i);
             }
-            numbersToChooseFrom.Remove(selection);
 
+            numbersToChooseFrom.Remove(selection);
             for (int i = 0; i < 4; i++) // Assign random answers
             {
-                int listIndex = UnityEngine.Random.Range(0, numbersToChooseFrom.Count);
+                int listIndex = UnityEngine.Random.Range(0, numbersToChooseFrom.Count -1);
                 int randomIndex = numbersToChooseFrom[listIndex];
                 numbersToChooseFrom.RemoveAt(listIndex);
 

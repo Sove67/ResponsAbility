@@ -27,6 +27,7 @@ public class Deck_Handler : MonoBehaviour
     public Button editButton;
     public Button deleteButton;
     public Button viewScoreButton;
+    public Toggle multipleChoiceToggle;
 
     // Inputs
     public InputField editorTitle;
@@ -120,6 +121,8 @@ public class Deck_Handler : MonoBehaviour
             editButton.interactable = false;
             deleteButton.interactable = false;
             viewScoreButton.interactable = false;
+            multipleChoiceToggle.interactable = false;
+            multipleChoiceToggle.isOn = false;
             card_handler.cardList = new List<Card_Handler.Card>();
         }
         else
@@ -139,6 +142,12 @@ public class Deck_Handler : MonoBehaviour
             if (deckList[selection].practiceSessions.Count > 0)
             { viewScoreButton.interactable = true; }
             else { viewScoreButton.interactable = false; }
+            if (deckList[selection].practiceSessions.Count > 4)
+            { multipleChoiceToggle.interactable = true; }
+            else { 
+                multipleChoiceToggle.interactable = false;
+                multipleChoiceToggle.isOn = false;
+            }
             card_handler.cardList = new List<Card_Handler.Card>(deckList[selection].content);
         }
         contentScrolling.UpdateLimits();
