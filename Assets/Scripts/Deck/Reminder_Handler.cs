@@ -59,7 +59,7 @@ public class Reminder_Handler : MonoBehaviour
 
     public void ChangeReminder(int mod) // change the reminder period by a step size of "mod", allowing for a time period of Never, Hours, and Days
     {
-        Deck_Handler.Deck currentDeck = deck_handler.deckList[deck_handler.selection];
+        Deck_Handler.Deck currentDeck = deck_handler.dataList[deck_handler.selection];
 
         if (currentDeck.reminder.period.Days + mod >= 0) 
         {
