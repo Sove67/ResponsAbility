@@ -40,12 +40,12 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
     }
 
     void OnApplicationQuit()
-    { Save(note_handler.dataList, deck_handler.dataList, settings.audioToggle.isOn); }
+    { Save(note_handler.noteList, deck_handler.deckList, settings.audioToggle.isOn); }
 
     private void OnApplicationFocus(bool focus)
     {
         if (!focus)
-        { Save(note_handler.dataList, deck_handler.dataList, settings.audioToggle.isOn); }
+        { Save(note_handler.noteList, deck_handler.deckList, settings.audioToggle.isOn); }
     }
 
     void Save(List<Note_Handler.Note> noteList, List<Deck_Handler.Deck> deckList, bool audio) // Save the notes and flashcard decks currently available
@@ -55,10 +55,15 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
         try
         {
             BinaryFormatter bf = new BinaryFormatter();
-            file = File.Create(Application.persistentDataPath + dataPath);
-            Save_File dataSet = new Save_File(noteList, deckList, audio);
-            bf.Serialize(file, dataSet);
+
+            if (noteList.Count > 0 || deckList.Count > 0)
+            {
+                file = File.Create(Application.persistentDataPath + dataPath);
+                Save_File dataSet = new Save_File(noteList, deckList, audio);
+                bf.Serialize(file, dataSet);
+            }
         } 
+
         catch (Exception e)
         {
             if(e != null)
@@ -84,17 +89,17 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
             file = File.Open(path, FileMode.Open);
             loadedFile = bf.Deserialize(file) as Save_File;
 
-            List<Note_Handler.Note> clearednoteList = new List<Note_Handler.Note>(loadedFile.noteList);
-            List<Deck_Handler.Deck> cleareddeckList = new List<Deck_Handler.Deck>(loadedFile.deckList);
+            List<Note_Handler.Note> clearedNoteList = new List<Note_Handler.Note>(loadedFile.noteList);
+            List<Deck_Handler.Deck> clearedDeckList = new List<Deck_Handler.Deck>(loadedFile.deckList);
 
-            if (clearednoteList != null)
+            if (clearedNoteList != null)
             {
-                foreach (var note in clearednoteList)
+                foreach (var note in clearedNoteList)
                 { note.instantiated = false; }
             }
-            if (cleareddeckList != null)
+            if (clearedDeckList != null)
             {
-                foreach (var deck in cleareddeckList)
+                foreach (var deck in clearedDeckList)
                 {
                     deck.instantiated = false;
                     foreach (var card in deck.content)
@@ -108,12 +113,12 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
                 }
             }
 
-            if (clearednoteList != null && cleareddeckList != null)
+            if (clearedNoteList != null && clearedDeckList != null)
             {
-                note_handler.dataList = clearednoteList;
+                note_handler.noteList = clearedNoteList;
                 note_handler.UpdateList();
 
-                deck_handler.dataList = cleareddeckList;
+                deck_handler.deckList = clearedDeckList;
                 deck_handler.UpdateList();
             }
             else
@@ -167,20 +172,20 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
     {
         try
         {
-            for (int i = note_handler.dataList.Count-1; i >= 0; i--)
+            for (int i = note_handler.noteList.Count-1; i >= 0; i--)
             {
                 note_handler.Select(i);
                 note_handler.Delete();
             }
-            note_handler.dataList = new List<Note_Handler.Note>();
-            for (int i = deck_handler.dataList.Count - 1; i >= 0; i--)
+            note_handler.noteList = new List<Note_Handler.Note>();
+            for (int i = deck_handler.deckList.Count - 1; i >= 0; i--)
             {
                 deck_handler.Select(i);
                 deck_handler.Delete();
             }
-            deck_handler.dataList = new List<Deck_Handler.Deck>();
+            deck_handler.deckList = new List<Deck_Handler.Deck>();
 
-            Save(note_handler.dataList, deck_handler.dataList, settings.audioToggle.isOn);
+            Save(note_handler.noteList, deck_handler.deckList, settings.audioToggle.isOn);
 
             AndroidNotificationCenter.CancelAllScheduledNotifications();
         }

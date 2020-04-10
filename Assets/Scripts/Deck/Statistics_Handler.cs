@@ -42,7 +42,7 @@ public class Statistics_Handler : MonoBehaviour
     // Functions
     public void UpdateContent() // assign all visual values to the parameters in the selected deck
     {
-        currentDeck = deck_handler.dataList[deck_handler.selection];
+        currentDeck = deck_handler.deckList[deck_handler.selection];
         practiceCount.text = currentDeck.practiceSessions.Count.ToString(); // # of practices
         recentScore.text = ParseGrade(currentDeck.practiceSessions[currentDeck.practiceSessions.Count - 1].grade); // most recent score
 

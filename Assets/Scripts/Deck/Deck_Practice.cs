@@ -76,10 +76,10 @@ public class Deck_Practice : MonoBehaviour
     // Functions
     public void LoadPracticeDeck() // Start a practice session with the selected deck and settings
     {
-        colourIndicator.GetComponent<Image>().material = colourOptions[deck_handler.dataList[deck_handler.selection].colour];
+        colourIndicator.GetComponent<Image>().material = colourOptions[deck_handler.deckList[deck_handler.selection].colour];
         if (shuffleToggle.isOn) // if shuffling deck
         {
-            cardList = new List<Card_Handler.Card>(deck_handler.dataList[deck_handler.selection].content);
+            cardList = new List<Card_Handler.Card>(deck_handler.deckList[deck_handler.selection].content);
             markListIndex = new int[cardList.Count];
 
             for (int i = 0; i < cardList.Count; i++)
@@ -97,7 +97,7 @@ public class Deck_Practice : MonoBehaviour
             }
         }
         else
-        { cardList = deck_handler.dataList[deck_handler.selection].content; }
+        { cardList = deck_handler.deckList[deck_handler.selection].content; }
 
         if (multipleChoiceToggle.isOn) // If using multiple choice
         {
@@ -113,7 +113,7 @@ public class Deck_Practice : MonoBehaviour
         //Empty the list
         markList = new Mark[cardList.Count];
 
-        deckTitle.text = deck_handler.dataList[deck_handler.selection].title;
+        deckTitle.text = deck_handler.deckList[deck_handler.selection].title;
         LoadPracticeCard(-1);
     }
 
@@ -218,7 +218,7 @@ public class Deck_Practice : MonoBehaviour
         else
         { givenAnswer = answerInput.text; }
 
-        Card_Handler.Card currentContent = deck_handler.dataList[deck_handler.selection].content[selection];
+        Card_Handler.Card currentContent = deck_handler.deckList[deck_handler.selection].content[selection];
 
         markList[selection] = new Mark(currentContent.question, currentContent.answer, givenAnswer, correct, false); // Record Result
         resultGUI.SetActive(true);
@@ -241,9 +241,9 @@ public class Deck_Practice : MonoBehaviour
         }
 
         if (shuffleToggle.isOn)
-        { deck_handler.dataList[deck_handler.selection].practiceSessions.Add(new SessionResult(count / markList.Length, organizedMarkList)); }
+        { deck_handler.deckList[deck_handler.selection].practiceSessions.Add(new SessionResult(count / markList.Length, organizedMarkList)); }
         else
-        { deck_handler.dataList[deck_handler.selection].practiceSessions.Add(new SessionResult(count / markList.Length, markList)); }
+        { deck_handler.deckList[deck_handler.selection].practiceSessions.Add(new SessionResult(count / markList.Length, markList)); }
 
         recentScoreGUI.SetActive(true);
         recentScoreText.text = count.ToString() + " out of " + markList.Length.ToString() + " answers correct!";
