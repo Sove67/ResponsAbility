@@ -71,7 +71,7 @@ public class Deck_Handler : MonoBehaviour
         // Start the scrollable areas with a maximum distance of 0
         titleScrolling.listLength = 0;
         titleScrolling.UpdateLimits();
-        SetValues(-1);
+        Select(-1);
         UpdateList();
     }
 
@@ -110,24 +110,21 @@ public class Deck_Handler : MonoBehaviour
     {
         if (isOn)
         {
-            SetValues(index); 
+            Select(index); 
         }
         else if (!titleToggleGroup.AnyTogglesOn())
-        { SetValues(-1); }
+        { Select(-1); }
     }
 
-    public void Select(int index) // Selections must be handled by toggling the button, because the button cannot be assigned without triggering its "On Value Changed" condition and creating a recursive loop.
+    public void Select(int newSelection) // Select deck of index "newSelection" from the dataList, assigning all visuals accordingly
     {
-        titleToggleGroup.SetAllTogglesOff();
-        UIList[index].GetComponent<Toggle>().isOn = true;
-    }
+        card_handler.DeleteCardUI(); // Clear Old Card UI First
 
-    public void SetValues(int index) // Select deck of index "index" from the dataList, assigning all visuals accordingly
-    {
-        card_handler.DeleteCardUI(); // Clear Old First
-        selection = index;
+        // Must have 3 states to allow for the reminder script to be called with the correct selection.
+        int oldSelection = selection;
+        selection = newSelection;
 
-        if (index == -1)
+        if (newSelection == -1)
         {
             description.text = "";
             editorTitle.text = "";
@@ -135,6 +132,11 @@ public class Deck_Handler : MonoBehaviour
             editorColourIndex = 0;
             editorColourIndicator.GetComponent<Image>().color = colourOptions[0].color;
             reminderPeriod.text = "";
+
+            if (0 < selection && selection < UIList.Count)
+            { UIList[oldSelection].GetComponent<Toggle>().onValueChanged.RemoveAllListeners(); } // Remove the listeners from the button that will change
+            titleToggleGroup.SetAllTogglesOff();
+            UpdateList(); // Re-apply the listeners
 
             practiceButton.interactable = false;
             editButton.interactable = false;
@@ -146,31 +148,35 @@ public class Deck_Handler : MonoBehaviour
         }
         else
         {
-            description.text = dataList[index].description;
-            editorTitle.text = dataList[index].title;
-            editorDescription.text = dataList[index].description;
-            editorColourIndex = dataList[index].colour;
-            editorColourIndicator.GetComponent<Image>().color = colourOptions[dataList[index].colour].color;
+            description.text = dataList[newSelection].description;
+            editorTitle.text = dataList[newSelection].title;
+            editorDescription.text = dataList[newSelection].description;
+            editorColourIndex = dataList[newSelection].colour;
+            editorColourIndicator.GetComponent<Image>().color = colourOptions[dataList[newSelection].colour].color;
             reminder_handler.ChangeReminder(0);
 
-            if (dataList[index].content.Count > 0)
+            UIList[newSelection].GetComponent<Toggle>().onValueChanged.RemoveAllListeners(); // Remove the listeners
+            titleToggleGroup.SetAllTogglesOff();
+            UIList[newSelection].GetComponent<Toggle>().isOn = true;
+            UpdateList(); // Re-apply the listeners
+
+            if (dataList[newSelection].content.Count > 0)
             { practiceButton.interactable = true; }
             else
             { practiceButton.interactable = false; }
             editButton.interactable = true;
             deleteButton.interactable = true;
-            if (dataList[index].practiceSessions.Count > 0)
+            if (dataList[newSelection].practiceSessions.Count > 0)
             { viewScoreButton.interactable = true; }
             else { viewScoreButton.interactable = false; }
-            if (dataList[index].practiceSessions.Count > 4)
+            if (dataList[newSelection].practiceSessions.Count > 4)
             { multipleChoiceToggle.interactable = true; }
             else { 
                 multipleChoiceToggle.interactable = false;
                 multipleChoiceToggle.isOn = false;
             }
-            card_handler.cardList = new List<Card_Handler.Card>(dataList[index].content);
+            card_handler.cardList = new List<Card_Handler.Card>(dataList[newSelection].content);
         }
-
         contentScrolling.UpdateLimits();
         contentScrolling.Reset();
         card_handler.SelectCard(-1);
@@ -213,7 +219,7 @@ public class Deck_Handler : MonoBehaviour
         dataList.RemoveAt(selection);
         Destroy(UIList[selection]);
         UIList.RemoveAt(selection);
-        SetValues(-1);
         UpdateList();
+        Select(-1);
     }
 }

@@ -55,7 +55,7 @@ public class Note_Handler : MonoBehaviour
         // Start the scrollable areas with a maximum distance of 0
         titleScrolling.listLength = 0;
         titleScrolling.UpdateLimits();
-        SetValues(-1);
+        Select(-1);
         UpdateList();
     }
 
@@ -94,45 +94,49 @@ public class Note_Handler : MonoBehaviour
     {
         if (isOn)
         {
-            SetValues(index); 
+            Select(index); 
         }
         else if (!titleToggleGroup.AnyTogglesOn())
-        { SetValues(-1); }
+        { Select(-1); }
     }
 
-    public void Select(int index)
+    public void Select(int newSelection) // Select note of index "newSelection" from the dataList, assigning all visuals accordingly
     {
-        titleToggleGroup.SetAllTogglesOff();
-        UIList[index].GetComponent<Toggle>().isOn = true;
-    }
-
-    public void SetValues(int index) // Select note of index "index" from the dataList, assigning all visuals accordingly
-    {
-        selection = index;
-        if (index == -1)
+        if (newSelection == -1)
         {
             noteContent.text = "";
             noteEditorTitle.text = "";
             noteEditorContent.text = "";
             noteEditorColourIndex = 0;
             noteEditorColourIndicator.GetComponent<Image>().color = colourOptions[0].color;
-            
+
+            if (0 < selection && selection < UIList.Count)
+            { UIList[selection].GetComponent<Toggle>().onValueChanged.RemoveAllListeners(); } // Remove the listeners from the button that will change
+            titleToggleGroup.SetAllTogglesOff();
+            UpdateList(); // Re-apply the listeners
+
             editNote.interactable = false;
             deleteNote.interactable = false;
         }
 
         else
         {
-            noteContent.text = dataList[index].content;
-            noteEditorTitle.text = dataList[index].title;
-            noteEditorContent.text = dataList[index].content;
-            noteEditorColourIndex = dataList[index].colour;
-            noteEditorColourIndicator.GetComponent<Image>().color = colourOptions[dataList[index].colour].color;
+            noteContent.text = dataList[newSelection].content;
+            noteEditorTitle.text = dataList[newSelection].title;
+            noteEditorContent.text = dataList[newSelection].content;
+            noteEditorColourIndex = dataList[newSelection].colour;
+            noteEditorColourIndicator.GetComponent<Image>().color = colourOptions[dataList[newSelection].colour].color;
+
+            UIList[newSelection].GetComponent<Toggle>().onValueChanged.RemoveAllListeners(); // Remove the listeners
+            titleToggleGroup.SetAllTogglesOff();
+            UIList[newSelection].GetComponent<Toggle>().isOn = true;
+            UpdateList(); // Re-apply the listeners
 
             editNote.interactable = true;
             deleteNote.interactable = true;
         }
 
+        selection = newSelection;
         contentScrolling.UpdateLimits();
         contentScrolling.Reset();
     }
@@ -170,6 +174,6 @@ public class Note_Handler : MonoBehaviour
         Destroy(UIList[selection]);
         UIList.RemoveAt(selection);
         UpdateList();
-        SetValues(-1);
+        Select(-1);
     }
 }

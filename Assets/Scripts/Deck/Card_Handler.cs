@@ -16,7 +16,6 @@ public class Card_Handler : MonoBehaviour
     public GameObject titlePrefab;
 
     // Input
-    public Button saveButton;
     public Button deleteButton;
     public InputField editorTitle;
     public InputField editorQuestion;
@@ -87,7 +86,6 @@ public class Card_Handler : MonoBehaviour
             editorTitle.interactable = false;
             editorQuestion.interactable = false;
             editorAnswer.interactable = false;
-            saveButton.interactable = false;
             deleteButton.interactable = false;
         }
         else
@@ -99,7 +97,6 @@ public class Card_Handler : MonoBehaviour
             editorTitle.interactable = true;
             editorQuestion.interactable = true;
             editorAnswer.interactable = true;
-            saveButton.interactable = true;
             deleteButton.interactable = true;
         }
     }
@@ -111,21 +108,23 @@ public class Card_Handler : MonoBehaviour
         UpdateCardList();
     }
 
-    public void InputButtonToggle()
-    {
-        if (editorTitle.text == "" || editorQuestion.text == "" || editorAnswer.text == "")
-        { saveButton.interactable = false; }
-        else
-        { saveButton.interactable = true; }
-    }
-
     public void SaveCard() // Save all changes to the selected card
     {
         if (selection != -1)
         {
-            cardList[selection] = new Card(editorTitle.text, editorQuestion.text, editorAnswer.text, cardList[selection].instantiated);
+            string title = editorTitle.text;
+            string question = editorQuestion.text;
+            string answer = editorAnswer.text;
 
-            SelectCard(-1);
+            if (editorTitle.text == "")
+            { title = "Untitled"; }
+            if (editorQuestion.text == "")
+            { question = "Question"; }
+            if (editorAnswer.text == "")
+            { answer = "Answer"; }
+
+            cardList[selection] = new Card(title, question, answer, cardList[selection].instantiated);
+
             UpdateCardList();
         }
     }
