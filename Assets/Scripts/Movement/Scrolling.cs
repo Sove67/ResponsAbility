@@ -8,11 +8,17 @@ public class Scrolling : MonoBehaviour
     public RectTransform mask;
     public RectTransform root;
     public RectTransform content;
+    public RectTransform scrollBar;
     private float? oldContentHeight;
     public float? listLength;
     private float oldListLength;
     public Vector2 YLimit;
     public float YBuffer;
+
+    public float contentRange;
+    public float barRange;
+    public float posRatio;
+
 
     public void UpdateLimits() // Update the limits of the titleScrolling root
     {
@@ -34,26 +40,27 @@ public class Scrolling : MonoBehaviour
                 oldContentHeight = content.rect.height;
             }
 
-            else
-            {
-                Debug.LogError("No Limiting Object Was Attached To The Scrolling Script On " + this.name + ".");
-                YLimit = Vector2.zero;
-            }
             YLimit.y += YBuffer - mask.rect.height;
             Reset();
+
+            if (YLimit.x <= YLimit.y)
+            { scrollBar.gameObject.SetActive(true); }
+            else
+            { scrollBar.gameObject.SetActive(false); }
         }
     }
 
     public void Swipe(float dist, Touch touch) // Filters input to correct root, and scrolls it to the new position, if it is within the limits.
     {
-        float posMod = root.anchoredPosition.y + dist;
+        float newPos = root.anchoredPosition.y + dist;
 
         if (mask.gameObject.activeSelf && RectTransformUtility.RectangleContainsScreenPoint(mask, touch.position, FindObjectOfType<Camera>()))
         {
-            if (posMod <= YLimit.x) // Lowest Limit
+            Debug.Log("Scroll At: " + this.name);
+            if (newPos <= YLimit.x) // Set to Lowest Limit
             { root.anchoredPosition = new Vector2(0, YLimit.x); }
 
-            else if (posMod >= YLimit.y) // Highest Limit
+            else if (newPos >= YLimit.y) // Set to Highest Limit
             { 
                 if (YLimit.x <= YLimit.y)
                 { root.anchoredPosition = new Vector2(0, YLimit.y); }
@@ -61,9 +68,28 @@ public class Scrolling : MonoBehaviour
                 { root.anchoredPosition = new Vector2(0, YLimit.x); }
             }
 
-            else // Posible Movement
-            { root.anchoredPosition = new Vector2(0, posMod); }
+            else // Unlimited Movement
+            { root.anchoredPosition = new Vector2(0, newPos); }
         }
+
+        if (listLength != null)
+        { MoveScrollBar(root.anchoredPosition.y, false); }
+
+        else if (content != null)
+        { MoveScrollBar(root.anchoredPosition.y, true); }
+    }
+
+    public void MoveScrollBar(float yPos, bool isContent)
+    {
+        if (isContent)
+        { yPos += content.rect.height /2; } // Offset the position by half the content height for content scrolling only
+
+        contentRange = Mathf.Abs(YLimit.x - YLimit.y); // Get the total range of movement of the root object
+        barRange = mask.rect.height - scrollBar.rect.height; // Get the distance the scroll bar can move
+        posRatio = yPos / contentRange * barRange; // Scale the ratio of the root's distance to the scroll bar range
+        posRatio = -(posRatio + scrollBar.rect.height/2); // Offset the pos by half the scrollbar's height and invert it
+
+        scrollBar.anchoredPosition = new Vector2(0, posRatio);
     }
 
     public void Reset() // Moves the titleScrolling root to the default position

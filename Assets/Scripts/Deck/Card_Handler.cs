@@ -69,10 +69,8 @@ public class Card_Handler : MonoBehaviour
         }
 
         // Update Scroll Limit for Titles
-        if (count > 5)
-        { titleScrolling.listLength = (count - 5) * titlePrefab.GetComponent<RectTransform>().rect.height; }
-        else
-        { titleScrolling.listLength = 0; }
+        titleScrolling.listLength = count * titlePrefab.GetComponent<RectTransform>().rect.height;
+        titleScrolling.UpdateLimits();
     }
 
     public void SelectCard(int index) // Select card of index "index" from the cardList, assigning all visuals accordingly
