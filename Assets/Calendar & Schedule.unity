@@ -4823,6 +4823,7 @@ MonoBehaviour:
   titlePrefab: {fileID: 1137172752812241965, guid: e3ef9f6955be2e34abe775cc3ac20607,
     type: 3}
   titleToggleGroup: {fileID: 1662240725}
+  audioSource: {fileID: 2030849428}
   practiceButton: {fileID: 596092155}
   editButton: {fileID: 1546098144}
   deleteButton: {fileID: 27247650}
@@ -4866,6 +4867,7 @@ MonoBehaviour:
   titlePrefab: {fileID: 1137172752812241965, guid: e3ef9f6955be2e34abe775cc3ac20607,
     type: 3}
   titleToggleGroup: {fileID: 746511586}
+  audioSource: {fileID: 2030849428}
   deleteButton: {fileID: 913776894}
   editorTitle: {fileID: 144119247}
   editorQuestion: {fileID: 1092360627}
@@ -6607,6 +6609,7 @@ MonoBehaviour:
   titlePrefab: {fileID: 1137172752812241965, guid: e3ef9f6955be2e34abe775cc3ac20607,
     type: 3}
   titleToggleGroup: {fileID: 1610034515}
+  audioSource: {fileID: 2030849428}
   editNote: {fileID: 1113117160}
   deleteNote: {fileID: 2053134793}
   noteContent: {fileID: 817064456}
@@ -23711,7 +23714,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00000059604645}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -6, y: -5.999996}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1754571469

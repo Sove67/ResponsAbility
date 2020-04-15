@@ -22,6 +22,7 @@ public class Deck_Handler : MonoBehaviour
     public GameObject listRoot;
     public GameObject titlePrefab;
     public ToggleGroup titleToggleGroup;
+    public AudioSource audioSource;
 
     // Buttons
     public Button practiceButton;
@@ -95,6 +96,7 @@ public class Deck_Handler : MonoBehaviour
             UIList[count].GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -spacing / 2 + (count * -spacing));
             UIList[count].GetComponent<Toggle>().onValueChanged.RemoveAllListeners();
             UIList[count].GetComponent<Toggle>().onValueChanged.AddListener((isOn) => ParseToggleToSelect(isOn, index)); // Code from https://answers.unity.com/questions/902399/addlistener-to-a-toggle.html
+            UIList[count].GetComponent<Toggle>().onValueChanged.AddListener((isOn) => audioSource.Play()); // Code from https://answers.unity.com/questions/902399/addlistener-to-a-toggle.html
             UIList[count].transform.Find("Title").GetComponent<Text>().text = dataList[count].title;
             UIList[count].transform.Find("Colour Indicator").GetComponent<Image>().color = colourOptions[dataList[count].colour].color;
 
