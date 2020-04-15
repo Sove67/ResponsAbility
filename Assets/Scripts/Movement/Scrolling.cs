@@ -56,7 +56,6 @@ public class Scrolling : MonoBehaviour
 
         if (mask.gameObject.activeSelf && RectTransformUtility.RectangleContainsScreenPoint(mask, touch.position, FindObjectOfType<Camera>()))
         {
-            Debug.Log("Scroll At: " + this.name);
             if (newPos <= YLimit.x) // Set to Lowest Limit
             { root.anchoredPosition = new Vector2(0, YLimit.x); }
 

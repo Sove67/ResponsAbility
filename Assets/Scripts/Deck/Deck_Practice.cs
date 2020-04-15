@@ -9,7 +9,7 @@ public class Deck_Practice : MonoBehaviour
 {
     // Variables
     // General
-    private List<Card_Handler.Card> cardList = new List<Card_Handler.Card>();
+    private List<Card_Handler.Card> dataList = new List<Card_Handler.Card>();
     private int selection = -1;
     private int chosenAnswer;
     private int correctAnswer;
@@ -79,25 +79,25 @@ public class Deck_Practice : MonoBehaviour
         colourIndicator.GetComponent<Image>().material = colourOptions[deck_handler.dataList[deck_handler.selection].colour];
         if (shuffleToggle.isOn) // if shuffling deck
         {
-            cardList = new List<Card_Handler.Card>(deck_handler.dataList[deck_handler.selection].content);
-            markListIndex = new int[cardList.Count];
+            dataList = new List<Card_Handler.Card>(deck_handler.dataList[deck_handler.selection].content);
+            markListIndex = new int[dataList.Count];
 
-            for (int i = 0; i < cardList.Count; i++)
+            for (int i = 0; i < dataList.Count; i++)
             {
-                Card_Handler.Card temp1 = cardList[i];
+                Card_Handler.Card temp1 = dataList[i];
                 int temp2 = markListIndex[i];
 
-                int randomIndex = UnityEngine.Random.Range(i, cardList.Count);
+                int randomIndex = UnityEngine.Random.Range(i, dataList.Count);
 
-                cardList[i] = cardList[randomIndex];
-                cardList[randomIndex] = temp1;
+                dataList[i] = dataList[randomIndex];
+                dataList[randomIndex] = temp1;
 
                 markListIndex[i] = randomIndex;
                 markListIndex[randomIndex] = temp2;
             }
         }
         else
-        { cardList = deck_handler.dataList[deck_handler.selection].content; }
+        { dataList = deck_handler.dataList[deck_handler.selection].content; }
 
         if (multipleChoiceToggle.isOn) // If using multiple choice
         {
@@ -111,7 +111,7 @@ public class Deck_Practice : MonoBehaviour
         }
 
         //Empty the list
-        markList = new Mark[cardList.Count];
+        markList = new Mark[dataList.Count];
 
         deckTitle.text = deck_handler.dataList[deck_handler.selection].title;
         LoadPracticeCard(-1);
@@ -123,15 +123,15 @@ public class Deck_Practice : MonoBehaviour
         if (mod == -1) // If choosing first card
         {
             selection = 0;
-            cardTitle.text = cardList[selection].title;
-            question.text = cardList[selection].question;
+            cardTitle.text = dataList[selection].title;
+            question.text = dataList[selection].question;
         }
 
-        else if (selection + mod < cardList.Count) // If choosing card within deck
+        else if (selection + mod < dataList.Count) // If choosing card within deck
         {
             selection += mod;
-            cardTitle.text = cardList[selection].title;
-            question.text = cardList[selection].question;
+            cardTitle.text = dataList[selection].title;
+            question.text = dataList[selection].question;
         }
 
         else
@@ -141,7 +141,7 @@ public class Deck_Practice : MonoBehaviour
         {
             // Create list of options
             List<int> numbersToChooseFrom = new List<int>();
-            for (int i = 0; i < cardList.Count; i++)
+            for (int i = 0; i < dataList.Count; i++)
             {
                 numbersToChooseFrom.Add(i);
             }
@@ -153,12 +153,12 @@ public class Deck_Practice : MonoBehaviour
                 int randomIndex = numbersToChooseFrom[listIndex];
                 numbersToChooseFrom.RemoveAt(listIndex);
 
-                multipleChoices[i].GetComponentInChildren<Text>().text = cardList[randomIndex].answer;
+                multipleChoices[i].GetComponentInChildren<Text>().text = dataList[randomIndex].answer;
             }
 
             // Assign one correct answer
             correctAnswer = UnityEngine.Random.Range(0, 3);
-            multipleChoices[correctAnswer].GetComponentInChildren<Text>().text = cardList[selection].answer;
+            multipleChoices[correctAnswer].GetComponentInChildren<Text>().text = dataList[selection].answer;
 
             // Clear the last answer
             for (int i = 0; i < multipleChoices.Length; i++)
@@ -199,7 +199,7 @@ public class Deck_Practice : MonoBehaviour
     {
         bool correct = false;
         string givenAnswer;
-        if ((multipleChoiceToggle.isOn && chosenAnswer == correctAnswer) || (answerInput.text == cardList[selection].answer)) // If looking for multiple choice & correct
+        if ((multipleChoiceToggle.isOn && chosenAnswer == correctAnswer) || (answerInput.text == dataList[selection].answer)) // If looking for multiple choice & correct
         {
             correct = true;
 
@@ -210,7 +210,7 @@ public class Deck_Practice : MonoBehaviour
         else
         {
             resultGUIResult.text = "Incorrect.";
-            resultGUIAnswer.text = "The answer was: " + cardList[selection].answer;
+            resultGUIAnswer.text = "The answer was: " + dataList[selection].answer;
         }
 
         if (multipleChoiceToggle.isOn)

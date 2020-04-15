@@ -93,9 +93,7 @@ public class Note_Handler : MonoBehaviour
     public void ParseToggleToSelect(bool isOn, int index)
     {
         if (isOn)
-        {
-            Select(index); 
-        }
+        { Select(index); }
         else if (!titleToggleGroup.AnyTogglesOn())
         { Select(-1); }
     }

@@ -7,20 +7,21 @@ public class Card_Handler : MonoBehaviour
 {
     // Variables
     // General
-    public List<Card_Handler.Card> cardList = new List<Card_Handler.Card>();
-    readonly private List<GameObject> cardUIList = new List<GameObject>();
+    public List<Card_Handler.Card> dataList = new List<Card_Handler.Card>();
+    readonly private List<GameObject> UIList = new List<GameObject>();
     private int selection = -1;
 
     // Enviroment
     public GameObject listRoot;
     public GameObject titlePrefab;
+    public ToggleGroup titleToggleGroup;
 
     // Input
     public Button deleteButton;
     public InputField editorTitle;
     public InputField editorQuestion;
     public InputField editorAnswer;
-    public Scrolling titleScrolling;
+    public Scrolling scrolling;
 
     // Classes
     [Serializable] public class Card // The details that make up one card in a deck
@@ -38,49 +39,81 @@ public class Card_Handler : MonoBehaviour
         }
     }
 
-
     // Functions
     public void Start()
     {
-        titleScrolling.listLength = 0;
-        titleScrolling.UpdateLimits();
+        scrolling.listLength = 0;
+        scrolling.UpdateLimits();
     }
-    public void UpdateCardList() // run through each set of cards, and create/update a prefab to match it's data
+
+    public void UpdateList() // run through each set of cards, and create/update a prefab to match it's data
     {
         int count = 0;
-        foreach (var card in cardList) // Update All Cards
+        foreach (var card in dataList) // Update All Cards
         {
             if (!card.instantiated) // Create Title Card.
             {
-                cardUIList.Add(Instantiate(titlePrefab, listRoot.transform));
-                cardList[count].instantiated = true;
+                UIList.Add(Instantiate(titlePrefab, listRoot.transform));
+                UIList[count].GetComponent<Toggle>().group = titleToggleGroup;
+                dataList[count].instantiated = true;
             }
-            if (card.instantiated)// Set Card Properties
-            {
-                Vector2 position = cardUIList[count].GetComponent<RectTransform>().anchoredPosition;
-                int index = count;
-                float spacing = titlePrefab.GetComponent<RectTransform>().rect.height;
-                cardUIList[count].GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -spacing / 2 + (count * -spacing));
-                cardUIList[count].GetComponent<Button>().onClick.RemoveAllListeners();
-                cardUIList[count].GetComponent<Button>().onClick.AddListener(() => SelectCard(index)); // Code from https://answers.unity.com/questions/938496/buttononclickaddlistener.html & https://answers.unity.com/questions/1384803/problem-with-onclickaddlistener.html
-                cardUIList[count].transform.Find("Title").GetComponent<Text>().text = cardList[count].title;
-            }
+            // Set Card Properties
+            Vector2 position = UIList[count].GetComponent<RectTransform>().anchoredPosition;
+            int index = count;
+            float spacing = titlePrefab.GetComponent<RectTransform>().rect.height;
+            UIList[count].GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -spacing / 2 + (count * -spacing));
+            UIList[count].GetComponent<Toggle>().onValueChanged.RemoveAllListeners();
+            UIList[count].GetComponent<Toggle>().onValueChanged.AddListener((isOn) => ParseToggleToSelect(isOn, index)); // Code from https://answers.unity.com/questions/902399/addlistener-to-a-toggle.html
+            UIList[count].transform.Find("Title").GetComponent<Text>().text = dataList[count].title;
+            
             count++;
         }
 
         // Update Scroll Limit for Titles
-        titleScrolling.listLength = count * titlePrefab.GetComponent<RectTransform>().rect.height;
-        titleScrolling.UpdateLimits();
+        scrolling.listLength = count * titlePrefab.GetComponent<RectTransform>().rect.height;
+        scrolling.UpdateLimits();
     }
 
-    public void SelectCard(int index) // Select card of index "index" from the cardList, assigning all visuals accordingly
+    public void ParseToggleToSelect(bool isOn, int index) // Set values based on if the toggle calling is active. Otherwise, remove values if no toggle is active.
     {
-        if (index == -1)
+        if (isOn)
+        { Select(index); }
+        else if (!titleToggleGroup.AnyTogglesOn())
+        { Select(-1); }
+    }
+
+    public void Select(int newSelection) // Select card of index "index" from the dataList, assigning all visuals accordingly
+    {
+        if (newSelection == -1)
         {
+
+            // Remove the listeners from the buttons that will be affected
+            editorTitle.onValueChanged.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.Off);
+            editorQuestion.onValueChanged.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.Off);
+            editorAnswer.onValueChanged.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.Off);
+            // Change the values
             editorTitle.text = "";
             editorQuestion.text = "";
             editorAnswer.text = "";
-            selection = index;
+            // Re-apply the listeners
+            editorTitle.onValueChanged.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.RuntimeOnly);
+            editorQuestion.onValueChanged.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.RuntimeOnly);
+            editorAnswer.onValueChanged.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.RuntimeOnly);
+
+            // Remove the listeners from the buttons that will be affected
+            if (0 < selection && selection < UIList.Count) 
+            {
+                UIList[selection].GetComponent<Toggle>().onValueChanged.RemoveAllListeners();
+            }
+            // Change the values
+            titleToggleGroup.SetAllTogglesOff(); 
+            // Re-apply the listeners
+            if (0 < selection && selection < UIList.Count)
+            {
+                UpdateList();
+            }
+
+
             editorTitle.interactable = false;
             editorQuestion.interactable = false;
             editorAnswer.interactable = false;
@@ -88,22 +121,44 @@ public class Card_Handler : MonoBehaviour
         }
         else
         {
-            editorTitle.text = cardList[index].title;
-            editorQuestion.text = cardList[index].question;
-            editorAnswer.text = cardList[index].answer;
-            selection = index;
+
+            // Remove the listeners from the buttons that will be affected
+            editorTitle.onValueChanged.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.Off);
+            editorQuestion.onValueChanged.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.Off);
+            editorAnswer.onValueChanged.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.Off);
+            // Change the values
+            editorTitle.text = dataList[newSelection].title;
+            editorQuestion.text = dataList[newSelection].question;
+            editorAnswer.text = dataList[newSelection].answer;
+            // Re-apply the listeners
+            editorTitle.onValueChanged.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.RuntimeOnly);
+            editorQuestion.onValueChanged.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.RuntimeOnly);
+            editorAnswer.onValueChanged.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.RuntimeOnly);
+
+
+            // Remove the listeners from the buttons that will be affected
+            UIList[newSelection].GetComponent<Toggle>().onValueChanged.RemoveAllListeners();
+            // Change the values
+            titleToggleGroup.SetAllTogglesOff();
+            UIList[newSelection].GetComponent<Toggle>().isOn = true;
+            // Re-apply the listeners
+            UpdateList();
+
+
             editorTitle.interactable = true;
             editorQuestion.interactable = true;
             editorAnswer.interactable = true;
             deleteButton.interactable = true;
         }
+
+        selection = newSelection;
     }
 
     public void CreateCard() // Create a new, empty card
     {
-        cardList.Add(new Card("Untitled", "Question", "Answer", false));
-        SelectCard(cardList.Count - 1);
-        UpdateCardList();
+        dataList.Add(new Card("Untitled", "Question", "Answer", false));
+        Select(dataList.Count - 1);
+        UpdateList();
     }
 
     public void SaveCard() // Save all changes to the selected card
@@ -121,28 +176,28 @@ public class Card_Handler : MonoBehaviour
             if (editorAnswer.text == "")
             { answer = "Answer"; }
 
-            cardList[selection] = new Card(title, question, answer, cardList[selection].instantiated);
+            dataList[selection] = new Card(title, question, answer, dataList[selection].instantiated);
 
-            UpdateCardList();
+            UpdateList();
         }
     }
 
     public void DeleteCard() // Delete the card's info and prefab
     {
-        cardList.RemoveAt(selection);
-        Destroy(cardUIList[selection]);
-        cardUIList.RemoveAt(selection);
-        SelectCard(-1);
-        UpdateCardList();
+        dataList.RemoveAt(selection);
+        Destroy(UIList[selection]);
+        UIList.RemoveAt(selection);
+        Select(-1);
+        UpdateList();
     }
 
     public void DeleteCardUI() // Delete all card prefabs, and mark the data as "uninstantiated"
     {
-        foreach (GameObject gameObject in cardUIList)
+        foreach (GameObject gameObject in UIList)
         { Destroy(gameObject); }
-        int limit = cardList.Count;
+        int limit = dataList.Count;
         for (int i = 0; i < limit; i++)
-        { cardList[i].instantiated = false; }
-        cardUIList.Clear();
+        { dataList[i].instantiated = false; }
+        UIList.Clear();
     }
 }

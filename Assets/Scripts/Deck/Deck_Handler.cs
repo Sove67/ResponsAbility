@@ -109,9 +109,7 @@ public class Deck_Handler : MonoBehaviour
     public void ParseToggleToSelect(bool isOn, int index) // Set values based on if the toggle calling is active. Otherwise, remove values if no toggle is active.
     {
         if (isOn)
-        {
-            Select(index); 
-        }
+        { Select(index); }
         else if (!titleToggleGroup.AnyTogglesOn())
         { Select(-1); }
     }
@@ -133,7 +131,7 @@ public class Deck_Handler : MonoBehaviour
             editorColourIndicator.GetComponent<Image>().color = colourOptions[0].color;
             reminderPeriod.text = "";
 
-            if (0 < selection && selection < UIList.Count)
+            if (0 < oldSelection && oldSelection < UIList.Count)
             { UIList[oldSelection].GetComponent<Toggle>().onValueChanged.RemoveAllListeners(); } // Remove the listeners from the button that will change
             titleToggleGroup.SetAllTogglesOff();
             UpdateList(); // Re-apply the listeners
@@ -144,7 +142,7 @@ public class Deck_Handler : MonoBehaviour
             viewScoreButton.interactable = false;
             multipleChoiceToggle.interactable = false;
             multipleChoiceToggle.isOn = false;
-            card_handler.cardList = new List<Card_Handler.Card>();
+            card_handler.dataList = new List<Card_Handler.Card>();
         }
         else
         {
@@ -175,11 +173,11 @@ public class Deck_Handler : MonoBehaviour
                 multipleChoiceToggle.interactable = false;
                 multipleChoiceToggle.isOn = false;
             }
-            card_handler.cardList = new List<Card_Handler.Card>(dataList[newSelection].content);
+            card_handler.dataList = new List<Card_Handler.Card>(dataList[newSelection].content);
         }
         contentScrolling.UpdateLimits();
         contentScrolling.Reset();
-        card_handler.SelectCard(-1);
+        card_handler.Select(-1);
     }
 
     public void SetColour(int mod) // Move once through the choice of colours by a step size of "mod" and assign the new value to the indicator to preview
@@ -199,11 +197,11 @@ public class Deck_Handler : MonoBehaviour
     {
         if (editorTitle.text == "")
         {
-            dataList[selection] = new Deck("Untitled", editorDescription.text, dataList[selection].practiceSessions, editorColourIndex, card_handler.cardList, dataList[selection].reminder, dataList[selection].instantiated);
+            dataList[selection] = new Deck("Untitled", editorDescription.text, dataList[selection].practiceSessions, editorColourIndex, card_handler.dataList, dataList[selection].reminder, dataList[selection].instantiated);
         }
         else
         {
-            dataList[selection] = new Deck(editorTitle.text, editorDescription.text, dataList[selection].practiceSessions, editorColourIndex, card_handler.cardList, dataList[selection].reminder, dataList[selection].instantiated);
+            dataList[selection] = new Deck(editorTitle.text, editorDescription.text, dataList[selection].practiceSessions, editorColourIndex, card_handler.dataList, dataList[selection].reminder, dataList[selection].instantiated);
         }
         UpdateList();
         Select(selection);
