@@ -73,7 +73,6 @@ public class Deck_Handler : MonoBehaviour
         titleScrolling.listLength = 0;
         titleScrolling.UpdateLimits();
         Select(-1);
-        UpdateList();
     }
 
     public void UpdateList() // run through each set of decks, and create/update a prefab to match it's data
@@ -219,7 +218,6 @@ public class Deck_Handler : MonoBehaviour
         dataList.RemoveAt(selection);
         Destroy(UIList[selection]);
         UIList.RemoveAt(selection);
-        UpdateList();
         Select(-1);
     }
 }

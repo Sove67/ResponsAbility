@@ -159,8 +159,8 @@ public class Card_Handler : MonoBehaviour
     public void CreateCard() // Create a new, empty card
     {
         dataList.Add(new Card("Untitled", "Question", "Answer", false));
-        Select(dataList.Count - 1);
         UpdateList();
+        Select(dataList.Count - 1);
     }
 
     public void SaveCard() // Save all changes to the selected card
@@ -189,8 +189,8 @@ public class Card_Handler : MonoBehaviour
         dataList.RemoveAt(selection);
         Destroy(UIList[selection]);
         UIList.RemoveAt(selection);
-        Select(-1);
         UpdateList();
+        Select(-1);
     }
 
     public void DeleteCardUI() // Delete all card prefabs, and mark the data as "uninstantiated"
