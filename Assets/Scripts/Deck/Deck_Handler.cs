@@ -135,6 +135,7 @@ public class Deck_Handler : MonoBehaviour
             if (0 < oldSelection && oldSelection < UIList.Count)
             { UIList[oldSelection].GetComponent<Toggle>().onValueChanged.RemoveAllListeners(); } // Remove the listeners from the button that will change
             titleToggleGroup.SetAllTogglesOff();
+            audioSource.Play(); // Play the click that was removed with the other listeners
             UpdateList(); // Re-apply the listeners
 
             practiceButton.interactable = false;
@@ -157,6 +158,7 @@ public class Deck_Handler : MonoBehaviour
             UIList[newSelection].GetComponent<Toggle>().onValueChanged.RemoveAllListeners(); // Remove the listeners
             titleToggleGroup.SetAllTogglesOff();
             UIList[newSelection].GetComponent<Toggle>().isOn = true;
+            audioSource.Play(); // Play the click that was removed with the other listeners
             UpdateList(); // Re-apply the listeners
 
             if (dataList[newSelection].content.Count > 0)

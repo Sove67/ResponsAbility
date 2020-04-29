@@ -23,15 +23,14 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
         // If program has saved a file before, load it.
         if (File.Exists(Application.persistentDataPath + dataPath))
         {
-            Load(Application.persistentDataPath + dataPath);
+            Load();
         }
 
         // Otherwize, it must be the first opening, so load the tutorial.
         else
         {
 #if UNITY_ANDROID // Need to extract data from compressed file using WebLoad if running on an android
-            WebLoad(Application.streamingAssetsPath + tutorialPath, Application.persistentDataPath + dataPath);
-            Load(Application.persistentDataPath + dataPath);
+            LoadTutorial();
 
 #else // Just load the data otherwise
             Load(Application.streamingAssetsPath + tutorialPath);
@@ -74,14 +73,14 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
         }
     }
 
-    void Load(string path) // Load the notes and decks that were saved on quit
+    void Load() // Load the notes and decks that were saved on quit
     {
         FileStream file = null;
 
         try
         {
             BinaryFormatter bf = new BinaryFormatter();
-            file = File.Open(path, FileMode.Open);
+            file = File.Open(Application.persistentDataPath + dataPath, FileMode.Open);
             loadedFile = bf.Deserialize(file) as Save_File;
 
             List<Note_Handler.Note> clearednoteList = new List<Note_Handler.Note>(loadedFile.noteList);
@@ -138,8 +137,10 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
         }
     }
 
-    void WebLoad(string inputPath, string outputPath) // Load a file from the compressed StreamingAssets folder on android
+    void LoadTutorial() // Load a file from the compressed StreamingAssets folder on android as a save file
     {
+        string inputPath = Application.streamingAssetsPath + tutorialPath;
+        string outputPath = Application.persistentDataPath + dataPath;
         try
         {
             var loadingRequest = UnityWebRequest.Get(inputPath);
@@ -162,6 +163,7 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
                 Debug.LogException(e, this);
             }
         }
+        Load();
     }
     public void Delete() // Save a Save_File with an empty note and deck list, and clear the currently used lists.
     {
@@ -180,7 +182,8 @@ public class Save_Load : MonoBehaviour // Most of this script is adapted from ht
             }
             deck_handler.dataList = new List<Deck_Handler.Deck>();
 
-            Save(note_handler.dataList, deck_handler.dataList, settings.audioToggle.isOn);
+            File.Delete(Application.persistentDataPath + dataPath);
+            LoadTutorial();
 
             AndroidNotificationCenter.CancelAllScheduledNotifications();
         }

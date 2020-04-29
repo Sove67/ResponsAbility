@@ -113,6 +113,7 @@ public class Note_Handler : MonoBehaviour
             if (0 < selection && selection < UIList.Count)
             { UIList[selection].GetComponent<Toggle>().onValueChanged.RemoveAllListeners(); } // Remove the listeners from the button that will change
             titleToggleGroup.SetAllTogglesOff();
+            audioSource.Play(); // Play the click that was removed with the other listeners
             UpdateList(); // Re-apply the listeners
 
             editNote.interactable = false;
@@ -130,6 +131,7 @@ public class Note_Handler : MonoBehaviour
             UIList[newSelection].GetComponent<Toggle>().onValueChanged.RemoveAllListeners(); // Remove the listeners
             titleToggleGroup.SetAllTogglesOff();
             UIList[newSelection].GetComponent<Toggle>().isOn = true;
+            audioSource.Play(); // Play the click that was removed with the other listeners
             UpdateList(); // Re-apply the listeners
 
             editNote.interactable = true;

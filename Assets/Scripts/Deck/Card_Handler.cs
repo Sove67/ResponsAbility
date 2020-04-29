@@ -108,7 +108,8 @@ public class Card_Handler : MonoBehaviour
                 UIList[selection].GetComponent<Toggle>().onValueChanged.RemoveAllListeners();
             }
             // Change the values
-            titleToggleGroup.SetAllTogglesOff(); 
+            titleToggleGroup.SetAllTogglesOff();
+            audioSource.Play(); // Play the click that was removed with the other listeners
             // Re-apply the listeners
             if (0 < selection && selection < UIList.Count)
             {
@@ -143,6 +144,7 @@ public class Card_Handler : MonoBehaviour
             // Change the values
             titleToggleGroup.SetAllTogglesOff();
             UIList[newSelection].GetComponent<Toggle>().isOn = true;
+            audioSource.Play(); // Play the click that was removed with the other listeners
             // Re-apply the listeners
             UpdateList();
 
